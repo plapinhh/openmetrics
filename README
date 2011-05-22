@@ -1,0 +1,42 @@
+== Setup (Debian GNU/Linux)
+
+1) Prerequisites
+    * install RoR 2.3.8 
+    * install required ruby gems
+    sudo gem install net-ssh net-sftp
+    sudo gem install nmap-parser
+    sudo gem install bb-ruby
+    sudo gem install rrd-ffi
+    sudo gem install chronic
+    sudo gem install packet
+    sudo gem install mongrel
+
+    * install database connector depending on your preferred backend, e.g. PostgreSQL
+    aptitude install libpq-dev
+    sudo gem install pg
+
+    * install additional system packages
+    sudo aptitude install memcached
+    sudo aptitude install librrd-ruby
+    sudo aptitude install libldap-ruby1.8
+    # debian5 package lacks of a symlink
+    cd /usr/lib/ && ln -s librrd.so.4 librrd.so
+    sudo aptitude install nmap
+
+ 
+
+2) Setup openmetrics
+    [initialize database]
+    * alter config/database.yml to fit your environment
+    * rake db:create
+    * rake db:schema:load
+    * rake insight:setup #this will generate an Admin-User (name: 'admin', pw: 'adminadmin')
+    * rake insight:service_setup
+
+    # configure LDAP authentication
+    enter your LDAP server ip and port in $RAILS_ROOT/lib/ldap_auth.rb
+
+3) Startup
+[mongrel (development)]
+./script/server
+./script/backgroundrb
