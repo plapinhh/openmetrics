@@ -1,0 +1,50 @@
+<% content_for :title, "Edit Workspace" %>
+
+
+<% form_for @workspace do |f| %>
+  <%= f.error_messages %>
+
+
+
+  <% content_for :navheader do %>
+    <%= link_to 'Workspaces', workspaces_path %>:
+    <%= link_to 'Show', :controller => "workspaces", :action => "show", :id => @workspace.id %> |
+    <%= link_to_add_fields "Add Widget", f, :widgets %> ---
+    <%= link_to_remote "Foo!", :url => {:controller => "workspaces", :action => "edit", :id => @workspace.id}, :method => 'get' %>
+  <% end %>
+
+
+
+
+<%# get all the widgets for a workspace %>
+<div id="workspace">
+
+      <% @workspace_widgets = Widget.find(:all, :conditions => { :workspace_id => @workspace.id }) %>
+      <% @workspace_widgets.each do |w| %>
+
+          <% randBgColor = "%06x" % (rand * 0xffffff) %>
+          <% randBgColor = "#" + randBgColor %>
+          <script type="text/javascript">
+             $(document).ready(function() {
+                var widgetTop = headerOffset + <%= w.top %>;
+                $('#widget-<%= w.id %>').css({top: widgetTop, left: <%= w.left %>})
+              });
+          </script>
+          <div class="widget" id="widget-<%= w.id %>" style="background-color: <%= randBgColor %>; width: <%= w.sizex %>px; height: <%= w.sizey %>px;">
+            <div class="dialog" title="edit widget <%= w.id %>">
+              <h2><%= w.id %></h2>
+
+              <%# insert edit form for widget with AJAX %>
+              <%= link_to_remote "Edit", :url => {:controller => "widgets", :action => "edit", :id => w.id}, :method => 'get' %>
+              <%= link_to "Delete", widget_path(w), :confirm => 'Are you sure?', :method => :delete %>
+
+            </div>
+          </div>
+      <% end %>
+
+<%# workspace div end %>
+</div>
+
+        <%= f.submit "Save" %>
+<%# form end %>
+<% end %>

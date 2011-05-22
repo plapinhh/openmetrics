@@ -1,0 +1,37 @@
+<% content_for :title, "Workspace" %>
+
+<% content_for :navheader do %>
+  <%= link_to 'Workspaces', workspaces_path %>:
+  <%= link_to 'Edit', edit_workspace_path(@workspace) %>
+<% end %>
+
+
+<div id="workspace">
+
+  <%# widgets are defined in workspaces_controller %>
+  <%# notification_widget ist allways usefull %>
+  <%#= render_widget 'in-notification-widget' %>
+
+  <%# a widget to trigger :sendNotification event %>
+  <%#= render_widget 'my_example_widget' %>
+
+  <% @workspace_widgets.each do |w| %>
+  
+    <% randBgColor = "%06x" % (rand * 0xffffff) %>
+    <% randBgColor = "#" + randBgColor %>
+    <script type="text/javascript">
+     $(document).ready(function() {
+        var widgetTop = headerOffset + <%= w.top %>;
+        $('#widget-<%= w.id %>').css({top: widgetTop, left: <%= w.left %>})
+      });
+    </script>
+    <div  class="widget" id="widget-<%= w.id %>" style="background-color: <%= randBgColor %>; width: <%= w.sizex %>px; height: <%= w.sizey %>px; top: <%= w.top %>px; left: <%= w.left %>px;">
+      <h2><%= w.id %></h2>
+
+      <img src="<%= w.uri %>"/>
+      
+    </div>
+  <% end %>
+
+</div>
+

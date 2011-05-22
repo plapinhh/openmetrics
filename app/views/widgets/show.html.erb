@@ -1,0 +1,29 @@
+<% title "Widget" %>
+
+<p>
+  <strong>Workspace:</strong>
+  <%=h @widget.workspace_id %>
+</p>
+<p>
+  <strong>Top:</strong>
+  <%=h @widget.top %>
+</p>
+<p>
+  <strong>Left:</strong>
+  <%=h @widget.left %>
+</p><p>
+  <strong>sizex:</strong>
+  <%=h @widget.sizex %>
+</p>
+<p>
+  <strong>sizey:</strong>
+  <%=h @widget.sizey %>
+</p>
+
+
+<p>
+  <%= link_to_function 'Back', 'history.back()' %>
+  <%= link_to "Edit", edit_widget_path(@widget) %> |
+  <%= link_to "Destroy", @widget, :confirm => 'Are you sure?', :method => :delete %> |
+  <%= link_to "View All", widgets_path %>
+</p>

@@ -1,3 +1,27 @@
+== Overview
+
+=== Components
+==== Web-UI
+
+    * Ruby/RoR interfaced API (XML, JSON, CSV & other)
+    * deployable into mongrel (recommended) or any Java servlet container, e.g. Tomcat (JRuby)
+
+==== Collectd
+
+    * rich performance monitoring (snmp has little data for a linux host)
+    * push model
+    * uses rrdtool for storage
+    * allows for mod_perl-style plugins
+    * can poll snmp stuff
+    * faster than munin - written in C++
+    * little config needed, just works!
+
+==== BackgroundRB
+
+    * Ruby job server and scheduler
+    * executes synchronous & asynchronous tasks interfaced by Ruby/RoR
+
+
 == Setup (Debian GNU/Linux)
 
 1) Prerequisites

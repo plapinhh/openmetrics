@@ -1,0 +1,16 @@
+
+<% form_for @workspace do |f| %>
+  <%= f.error_messages %>
+
+
+  <%= f.label :name %>
+  <%= f.text_field :name %>
+
+
+  <%# get fields necessary for a widget%>
+  <% f.fields_for :widgets do |builder| %>
+    <%= render "widget_fields", :f => builder %>
+  <% end %>
+
+  <%= f.submit "Save" %>
+<% end %>

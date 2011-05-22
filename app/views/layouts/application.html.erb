@@ -1,0 +1,35 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title><%= h(yield(:title) || "Untitled") %></title>
+   
+    <%= stylesheet_link_tag 'blitzer/jquery-ui-1.8.1.custom.css' %>
+    <%= stylesheet_link_tag 'jquery.jnotify.css' %>
+    <%= stylesheet_link_tag 'application' %>
+    <%= javascript_include_tag 'jquery-1.4.2.min', 'jquery-ui-1.8.1.custom.min', 'jquery.jnotify', 'jrails', 'application' %>
+
+    <%= yield(:head) %>
+  </head>
+  <body>
+
+    <div id="main">
+
+      <!--  the top navigation menu -->
+      <div id="header">
+        <div id="navheader"><%= yield(:navheader) %></div>
+        <div id="actions"><%= yield(:actions) %></div>
+      </div>
+
+      <!-- notification area -->
+      <div id="in-notification-widget">
+      </div>
+
+
+
+     <%= yield %>
+
+   </div>
+
+  </body>
+</html>
