@@ -1,0 +1,122 @@
+<script type="text/javascript">
+  $j(document).ready(function($) {
+    var search_delay = undefined; 
+    var selectedItem = 0; // used to highlight searchresult by keyboard 
+    
+    $j("#search").keydown(function(event) {
+      
+       if(search_delay != undefined) {
+                clearTimeout(search_delay);
+        }
+        
+        // keybindings
+        var e; 
+        if (event.which !="") { e = event.which; }
+			else if (event.charCode != "") { e = event.charCode; }
+			else if (event.keyCode != "") { e = event.keyCode; }
+        
+        switch(e) {
+                case 38: // up arrow 
+			//alert("keypress up");
+                        var allItems = $j("#ajax_search_result").find('a');
+                        if (allItems.size() > 0) {
+                          if (selectedItem > 0 && selectedItem <= allItems.size()) {
+                            selectedItem = selectedItem - 1;
+              
+                            $j.each(allItems, function(index, value) {
+                              $j(this).removeClass("ui-corner-all ui-state-active"); // clean active highlights
+                              //alert(index + ': ' + value);
+                              if (index == selectedItem - 1 ) {
+                                $j(this).addClass("ui-corner-all ui-state-active");
+                                var linkattr = $j(this).attr('href');
+                                //$j("#search").val(linkattr);
+                                $j("#search").parent().attr("action", linkattr); // set form target to active item
+                              }
+                            });
+                          } 
+                          if (selectedItem == 0) {
+                            // here we are if someone pressed up key to have no item selected anymore
+                            // reset form action to search again 
+                            $j("#search").parent().attr("action", "search"); 
+                          }
+                        }
+                        return false;
+                        break;
+                        
+                case 40: // down arrow
+                        // hightlight next item of resultset 
+			//alert("keypress down");
+                        <%#*$j('#ajax_search_result').css({backgroundColor: "red"});%>
+                        var allItems = $j("#ajax_search_result").find('a');
+                        if (allItems.size() > 0) {
+                          if (selectedItem <= allItems.size() - 1 ) {
+                                selectedItem = selectedItem + 1;      
+                                $j.each(allItems, function(index, value) {
+                                  $j(this).removeClass("ui-corner-all ui-state-active"); // clean active highlights
+                                  //alert(index + ': ' + value);
+                                  if (index == selectedItem - 1 ) {
+                                    $j(this).addClass("ui-corner-all ui-state-active");
+                                    var linkattr = $j(this).attr('href');
+                                    //$j("#search").val(linkattr);
+                                    $j("#search").parent().attr("action", linkattr); // set form target to active item
+                                  }
+                              });
+                          }
+                        };
+                        return false;
+                        break;		
+                default:
+                        search_delay = setTimeout(function() {
+                              if($j("#search").val().trim().length > 0){
+                                $j('#ajax_search_result').fadeOut("fast");
+                                $j.ajax({
+                                  url: '/search?search='+encodeURIComponent($j("#search").val().trim()),
+                                  type: "GET",
+                                  complete: function(data, textStatus){
+                                    if(textStatus=="success") {
+                                      // callback for systems loading; create systems selection input
+                                      var result = data.responseText;
+                                      if (result != "false") {
+                                        showAjaxSearchResults(result);
+                                      }
+                                      else {
+                                        // do something?
+                                      }
+                                    }
+                                  },
+                                  error: function(data, textStatus) {
+                                  }
+                                });
+                              }
+                          }, 500);
+        } // end switch           
+    }); // end keydown
+
+    // hide result if focus left searchbox
+    $j("#search").bind('focusout', function() {
+      setTimeout(function() {$j('#ajax_search_result').hide("fast");}, 400);
+      selectedItem = 0; // reset search result selection
+    });
+    
+  });
+  
+  function showAjaxSearchResults(result) {
+    var pos = $j("#search").position();
+    $j('#ajax_search_result')
+      .css({position: "absolute", top: pos.top + 25, left: pos.left})
+      .empty()
+      .html(result)
+      .fadeIn("fast"); 
+  }
+</script>
+
+  <!-- search form -->
+    <form action="/search" method="get">
+      <input type="text" name="search" id="search" autocomplete="off" value="<%= yield :search %>" style="width:70%;"/>
+      <%=  image_submit_tag("/images/iconsweets_icons/16x16/magnifyingglass.png", {:title => "Find"} ) %>
+      <%#*<input type="submit" title="Search" value="Find"/>%>
+    </form>
+  <!--  end search form -->
+
+<div id="ajax_search_result" style="display: none">
+</div>

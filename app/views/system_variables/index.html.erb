@@ -1,0 +1,24 @@
+<h1>Listing system_variables</h1>
+
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Value</th>
+    <th>System</th>
+  </tr>
+
+<% for system_variable in @system_variables %>
+  <tr>
+    <td><%=h system_variable.name %></td>
+    <td><%=h system_variable.value %></td>
+    <td><%=h system_variable.system.name %></td>
+    <td><%= link_to 'Show', system_variable %></td>
+    <td><%= link_to 'Edit', edit_system_variable_path(system_variable) %></td>
+    <td><%= link_to 'Destroy', system_variable, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New system_variable', new_system_variable_path %>

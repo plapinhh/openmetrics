@@ -1,0 +1,55 @@
+<%# http://michael.github.com/multiselect/ %>
+<%= stylesheet_link_tag 'ui.multiselect' %>
+<%= javascript_include_tag "ui.multiselect" %>
+
+<script type="text/javascript">
+  $j(document).ready(function($) {
+    $j("select").multiselect();
+  });
+</script>
+<h1>Threshold: <%=h @threshold.name || ('#'+@threshold.id.to_s) %>
+  <div style="float: right;"><%= link_to '[edit]', edit_threshold_path(@threshold) %>
+    <%= link_to '[delete]', @threshold, :confirm => 'Delete threshold from system?', :method => :delete %></div>
+</h1>
+<h2>Metrics selection:</h2>
+
+<p><b>Selected systems:</b><br/>
+  <% @systems.each do |s| %>
+  <p style="margin: 0px; padding: 2px 5px; font-size: 12px; border-bottom: 1px solid #ddd">
+    <a href="/systems/<%=h s.id %>" title="Show">
+      <b>Name:&nbsp;</b><%=h s.name %>,
+      <b>IP:&nbsp;</b><%=h s.ip %>
+      <span class="ui-icon ui-icon-newwin" style="display:inline-block; cursor:pointer;"></span>
+    </a>
+  </p>
+<% end %>
+</p>
+
+<p><b>Selected metric identifier:</b><br/>
+  <% @threshold.metric_identifiers.each do |m| %>
+  <p style="margin: 0px; padding: 2px 5px; font-size: 12px; border-bottom: 1px solid #ddd">
+    <b>Identifier:&nbsp;</b><%=h m %>
+  </p>
+<% end %>
+</p>
+
+<p>
+  <b>Metric filter:</b>
+
+  <%=h @threshold.metric_filter %></p>
+
+<div class="ui-helper-clearfix">
+  <div style="float: left;width:250px;">Warning Max: <%= @threshold.warning_max || '-' %></div>
+  <div style="float: left;">Warning Min: <%= @threshold.warning_min || '-' %></div>
+</div>
+
+<div class="ui-helper-clearfix">
+  <div style="float: left;width:250px;">Failure Max: <%= @threshold.failure_max || '-' %></div>
+  <div style="float: left;">Failure Min: <%= @threshold.failure_min || '-' %></div>
+</div>
+<br />
+<div class="ui-helper-clearfix">
+  <div style="float: left;width:250px;">Invert values: <%= (@threshold.invert_values)? 'yes' : 'no' %></div>
+  <div style="float: left;width:250px;">Percentage: <%= (@threshold.percentage)? 'yes' : 'no' %></div>
+  <div style="float: left;">Persist: <%= (@threshold.persist)? 'yes' : 'no' %></div>
+</div>

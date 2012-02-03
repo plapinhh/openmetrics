@@ -1,0 +1,19 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  start_at: 2011-03-07 16:38:24
+  end_at: 2011-03-07 16:38:24
+  systems: MyText
+  services: MyText
+  systemGroups: MyText
+  serviceGroups: MyText
+  preferences: MyText
+
+two:
+  start_at: 2011-03-07 16:38:24
+  end_at: 2011-03-07 16:38:24
+  systems: MyText
+  services: MyText
+  systemGroups: MyText
+  serviceGroups: MyText
+  preferences: MyText

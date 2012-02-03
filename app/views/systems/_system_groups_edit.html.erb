@@ -1,0 +1,26 @@
+<script type="text/javascript">
+  $j(document).ready(function($) {
+    $j("select.system_group_maps").multiselect();
+    
+    $j("select.system_group_maps").bind('change', function(event) {
+      setAlertForSaveButton();
+      $j(this).unbind(event);
+    });
+    $j("a.add-all, a.remove-all").click(function(){$j(this).blur();});
+  });
+</script>
+
+<select class="multiselect system_group_maps" multiple="multiple" name="system_group_maps[]"  style="width:440px;height:200px;">
+  <% checked_groups = Hash.[] %>
+  <% for system_group_map in @system.system_group_maps %>
+    <option value="<%=  system_group_map.id %>" selected="selected" role="system_group_map"><%= system_group_map.system_group.name %> </option>
+  <% checked_groups[system_group_map.system_group.id] = true unless checked_groups[system_group_map.system_group.id] != nil %>
+  <% end %>
+
+  <% for system_group in @system_groups %>
+    <% unless checked_groups[system_group.id] %>
+      <option value="<%=  system_group.id %>" role="system_group"><%= system_group.name %> </option>
+    <% end %>
+  <% end %>
+</select>
+<br /> <%# the break has some strange side effects with scroll bars of portlets... so, let it in or fix it...%>

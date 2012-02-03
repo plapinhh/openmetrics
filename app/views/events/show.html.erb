@@ -1,0 +1,38 @@
+<p>
+  <b>Start at:</b>
+  <%=h @event.start_at %>
+</p>
+
+<p>
+  <b>End at:</b>
+  <%=h @event.end_at %>
+</p>
+
+<p>
+  <b>Systems:</b>
+  <%=h @event.systems %>
+</p>
+
+<p>
+  <b>Services:</b>
+  <%=h @event.services %>
+</p>
+
+<p>
+  <b>Systemgroups:</b>
+  <%=h @event.systemGroups %>
+</p>
+
+<p>
+  <b>Servicegroups:</b>
+  <%=h @event.serviceGroups %>
+</p>
+
+<p>
+  <b>Preferences:</b>
+  <%=h @event.preferences %>
+</p>
+
+
+<%= link_to 'Edit', edit_event_path(@event) %> |
+<%= link_to 'Back', events_path %>

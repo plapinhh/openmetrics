@@ -1,0 +1,24 @@
+<h1>New service</h1>
+
+<%= error_messages_for :service %>
+
+<% form_for(@service) do |f| %>
+
+<p><%= link_to 'Back to index', services_path, :class => "navigation" %></p>
+<table>
+  <tr>
+    <td rowspan="5"><img src="/images/run128.png"></td>
+    <td class="<%=cycle("odd","even")%>">Name:</td><td class="odd"><%= f.text_field :name %></td>
+  </tr>
+  <tr class="<%=cycle("odd","even")%>"><td>Typ:</td><td><%= f.text_field :typ %></td></tr>
+  <tr class="<%=cycle("odd","even")%>"><td>Group:</td><td><%= f.text_field :group %></td></tr>
+  <tr class="<%=cycle("odd","even")%>"><td>Dns Name:</td><td><%= f.text_field :dns_name %></td></tr>
+  <tr class="<%=cycle("odd","even")%>"><td>Description:</td><td><%= f.text_field :description %></td></tr>
+</table>
+
+<p>
+<%= f.submit "Create" %>  |
+<%= link_to 'Back', services_path, :class => :navigation %>
+</p>
+
+<% end %>

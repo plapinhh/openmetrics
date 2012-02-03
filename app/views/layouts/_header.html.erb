@@ -1,0 +1,132 @@
+<script type="text/javascript">
+  $j(document).ready(function($) {
+    // BUTTONS
+    $j('.fg-button').hover(
+            function(){ $(this).removeClass('ui-state-default').addClass('ui-state-focus'); },
+            function(){ $(this).removeClass('ui-state-focus').addClass('ui-state-default'); }
+    );
+
+    // MENUS
+
+            $j('#inventory').css('padding-right', '2.1em');
+            $j('#inventory').menuFilament({
+                    content: $('#inventory').next().html(), // grab content from this page
+                    showSpeed: 400
+
+            });
+
+            $j('#admin').css('padding-right', '2.1em');
+            $j('#admin').menuFilament({
+                    content: $('#admin').next().html(), // grab content from this page
+                    flyOut: true
+            });
+
+  });
+</script>
+
+<div id="header" class="ui-helper-clearfix">
+  <div id="navigation" style="float:left;">
+    <div style="float:left;">
+      <%  if controller.controller_name == "welcome_page" %>
+        <%= link_to 'Home', '/welcomepage', :class => "fg-button fg-button-icon-right ui-widget ui-state-default ui-state-active", :tabindex => "1" %>
+       <% else %>
+       <%= link_to 'Home', '/welcomepage', :class => "fg-button fg-button-icon-right ui-widget ui-state-default", :tabindex => "1" %>
+      <%  end %>
+    </div>
+
+    <div style="float:left;">
+      <%  if controller.controller_name == "users" && controller.action_name == 'show' %>
+        <%= link_to_user @current_user, :content_text => 'You', :class => "fg-button fg-button-icon-right ui-widget ui-state-default ui-state-active", :tabindex => "2" %>
+       <% else %>
+        <%= link_to_user @current_user, :content_text => 'You', :class => "fg-button fg-button-icon-right ui-widget ui-state-default", :tabindex => "2" %>
+      <%  end %>
+    </div>
+
+    <div style="float:left;">
+      <%  if controller.controller_name == "systems" || controller.controller_name == "services" || controller.controller_name == "alerts" || controller.controller_name == "events" || controller.controller_name == "dashboards" %>
+        <%= link_to "<span class=\"ui-icon ui-icon-triangle-1-s\"></span>Inventory", '#inventory_items', :id => "inventory", :class => "fg-button fg-button-icon-right ui-widget ui-state-default ui-state-active", :tabindex => "3" %>
+      <% else %>
+              <%= link_to "<span class=\"ui-icon ui-icon-triangle-1-s\"></span>Inventory", '#inventory_items', :id => "inventory", :class => "fg-button fg-button-icon-right ui-widget ui-state-default", :tabindex => "3" %>
+      <% end %>
+      <div id="inventory_items" class="hidden">
+        <ul>
+          <li><%= link_to 'Systems', systems_path %></li>
+          <li><%= link_to 'Services', services_path %></li>
+          <%#*<li><a href="#">Some Submenu</a>%>
+              <%#*<ul>%>
+                <%#*<li><a href="#">Baseball</a></li>%>
+                <%#*<li><a href="#">Basketball</a></li>%>
+                <%#*<li><a href="#">A really long label would wrap nicely as you can see</a></li>%>
+                <%#*<li><a href="#">Swimming</a>%>
+                  <%#*<ul>%>
+                    <%#*<li><a href="#">High School</a></li>%>
+                    <%#*<li><a href="#">College</a></li>%>
+                    <%#*<li><a href="#">Professional</a></li>%>
+                  <%#*</ul>%>
+                <%#*</li>%>
+              <%#*</ul>%>
+          <%#*</li>%>
+          <li><%= link_to 'Alerts', alerts_path %></li>
+          <li><%= link_to 'Events', events_path %></li>
+          <li><%= link_to 'Dashboards', dashboards_path %></li>
+        </ul>
+      </div>
+    </div>
+
+    <% if @current_user.has_role?('master') %>
+      <div style="float:left;">
+        <%  if controller.controller_name == "users" && controller.action_name == 'index' %>
+          <%= link_to "<span class=\"ui-icon ui-icon-triangle-1-s\"></span>Admin Area", '#admin_items', :id => "admin", :class => "fg-button fg-button-icon-right ui-widget ui-state-default ui-state-active", :tabindex => "4" %>
+        <% else %>
+          <%= link_to "<span class=\"ui-icon ui-icon-triangle-1-s\"></span>Admin Area", '#admin_items', :id => "admin", :class => "fg-button fg-button-icon-right ui-widget ui-state-default", :tabindex => "4" %>
+        <% end %>
+        <div id="admin_items" class="hidden">
+          <ul>
+            <li><%= link_to 'Status', users_path(:anchor => "status") %></li>
+            <li><%= link_to 'User Accounts', users_path(:anchor => "usermgmt") %></li>
+            <li><%= link_to 'Metrics &amp; Thresholds', users_path(:anchor => "metricsthresholds") %></li>
+          </ul>
+        </div>
+      </div>
+    <%  end %>
+
+  </div>
+  <!--  end navigation menu -->
+
+   <!-- actions div should be used for additional buttons such as edit in dashboard show view -->
+  <div id="actions" style="float:left;"><%= yield(:actions) %>
+  </div>
+  <!-- whenever ajax requests are performed, a loading image will appear -->
+  <%#*<div id="ajaxload" style="float:left;margin:7px;">%>
+    <%#*<div  class="ui-widget ui-state-error" style="padding-left:2px;width:80px;">%>
+      <%#*<span style="vertical-align: middle;">Loading</span>%>
+      <%#*<img alt="loading..." src="/images/ajax-loader.gif" style="vertical-align: middle;" />%>
+    <%#*</div>%>
+  <%#*</div>%>
+
+  <!-- logout -->
+  <div id="logout" style="float: right;">
+      <span class="ui-icon ui-icon-arrowthick-1-e" style="float: left;"></span><%= link_to 'logout', logout_url %>
+  </div>
+
+  <!-- search box -->
+    <div id="searchbox" style="float: right;">
+      <%= render :partial => "search/input" %>
+    </div>
+  <!--  end search box -->
+
+  <!-- some information of current login -->
+  <div id="user" style="float: right;">
+    <strong><%= @current_user.login %></strong>
+    <%#*returns wrong expirey time!%>
+    <%#= "Your session expires at " + session[:expires_at].to_s unless session[:expires_at].nil? %>
+  </div>
+
+  <div id="ajaxload" style="position:fixed;top:4px;right:4px;z-index: 9999;">
+    <div  class="ui-widget ui-state-error" style="padding-left:2px;width:80px;">
+      <span style="vertical-align: middle;">Loading</span>
+      <img alt="loading..." src="/images/ajax-loader.gif" style="vertical-align: middle;" />
+    </div>
+  </div>
+
+</div>

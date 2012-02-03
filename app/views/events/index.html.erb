@@ -1,0 +1,68 @@
+<%#*<script type="text/javascript">%>
+<%#*$j(document).ready(function($) {%>
+  <%#*$j('#tabs').tabs();%>
+<%#*});%>
+<%#*</script>%>
+<h1>Manage events</h1>
+
+<p>This page allows you to manage all events.</p>
+
+
+<ul>
+  <li>
+    <%= link_to "<span style=\"vertical-align: middle\" class=\"ui-icon ui-icon-plusthick inline-ui-icon\"></span> New event", new_event_path %>
+  </li>
+</ul>
+
+<h2>Recent events</h2>
+
+<% unless Time.zone.now.gmtoff == 0 %>
+  <p class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: .7em .7em;">
+      <span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>
+        All displayed time data is automatically formatted for your timezone (<%= @current_user.time_zone %>).<br/><small>Server time now is <%= Time.now.gmtime %> with offset <% Time.zone = @current_user.time_zone %><%= Time.zone.now.gmtoff %> seconds to <%= @current_user.time_zone || "no timezone set" %></small>
+  </p>
+<% end %>
+
+<%#*<div id="tabs" style='padding: 5px 10px; height:360px; overflow:auto;'>%>
+  <%#*<ul>%>
+      <%#*<li><a href="#tab-list">List</a></li>%>
+      <%#*<li><a href="#tab-calendar">Calendar</a></li>%>
+  <%#*</ul>%>
+  <%#*<div id="tab-list" style='padding: 5px 10px; height:305px; overflow:auto;'>%>
+    <table>
+      <tr>
+        <th>Title</th>
+
+        <th>Start at</th>
+        <th>End at</th>
+        <th>Description</th>
+        <%#*<th>Systems</th>%>
+        <%#*<th>Services</th>%>
+        <%#*<th>Systemgroups</th>%>
+        <%#*<th>Servicegroups</th>%>
+      </tr>
+
+    <% @events.each do |event| %>
+      <tr>
+
+        <td width="200"><span style="vertical-align: middle" class="ui-icon ui-icon-circle-arrow-e inline-ui-icon"></span><span style="border-bottom: 1px dotted #333"><%= link_to " #{event.name}", event %></span></td>
+        <td width="150"><%=h event.start_at.strftime("%a, %d. %b %Y %H:%M:%S") %></td>
+        <td width="150"><%=h event.end_at.strftime("%a, %d. %b %Y %H:%M:%S") %></td>
+        <td width="300"><%=h event.prefs['description'] %></td>
+
+        <!--td><%=h event.systems %></td>
+        <td><%=h event.services %></td>
+        <td><%=h event.systemGroups %></td>
+        <td><%=h event.serviceGroups %></td-->
+
+        <!--td><%= link_to 'Show', event %></td-->
+        <td><%= link_to 'Edit', edit_event_path(event) %></td>
+        <td><%= link_to 'Destroy', event, :confirm => 'Are you sure?', :method => :delete %></td>
+      </tr>
+    <% end %>
+    </table>
+  <%#*</div>%>
+  <%#*<div id="tab-calendar" style='padding: 5px 10px; height:305px; overflow:auto;'>%>
+    
+  <%#*</div>%>
+<%#*</div>%>

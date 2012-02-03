@@ -1,0 +1,42 @@
+<%# http://michael.github.com/multiselect/; %>
+<%= stylesheet_link_tag 'ui.multiselect' %>
+<%= javascript_include_tag "ui.multiselect" %>
+
+<%# http://www.trirand.com/blog/ %>
+<%= stylesheet_link_tag 'ui.jqgrid' %>
+<%= javascript_include_tag "grid.locale-de" %>
+<%= javascript_include_tag "jquery.jqGrid.min" %>
+
+<%= javascript_include_tag "services.index" %>
+
+<%= javascript_tag "var AUTH_TOKEN = #{form_authenticity_token.inspect};" if protect_against_forgery? %>
+
+<h1>Manage services</h1>
+
+<p>This page allows you to create, retrieve, update and delete services. Some actions can only performed when a service is selected!</p>
+
+
+<%#* TODO add really useful service actions here..%>
+
+<ul>
+  <li>
+    <span style="vertical-align: middle" class="ui-icon ui-icon-plusthick inline-ui-icon"></span>
+    <a href="#" id="addServiceButton">New service</a>
+  </li>
+  <li>
+    <span style="vertical-align: middle" class="ui-icon ui-icon-trash inline-ui-icon"></span>
+    <a href="#" id="delServiceButton">Delete service</a>
+  </li>
+</ul>
+
+
+<h2>Current services</h2>
+
+<%#*<input type="BUTTON" id="addServiceButton" value="Add service" />%>
+<%#*<input type="BUTTON" id="delServiceButton" value="Delete service" />%>
+
+<table id="services_table"></table>
+
+
+
+

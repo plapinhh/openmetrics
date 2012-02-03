@@ -1,0 +1,2 @@
+class CrontabHoursController < ApplicationController
+end

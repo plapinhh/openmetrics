@@ -1,0 +1,24 @@
+<h1>Listing running_services</h1>
+
+<table>
+  <tr>
+    <th>System</th>
+    <th>Service</th>
+    <th>Comment</th>
+  </tr>
+
+<% for running_service in @running_services %>
+  <tr>
+    <td><%=h running_service.system_id %></td>
+    <td><%=h running_service.service_id %></td>
+    <td><%=h running_service.comment %></td>
+    <td><%= link_to 'Show', running_service %></td>
+    <td><%= link_to 'Edit', edit_running_service_path(running_service) %></td>
+    <td><%= link_to 'Destroy', running_service, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New running_service', new_running_service_path %>

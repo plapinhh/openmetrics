@@ -1,0 +1,56 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+  <%#*if you change the title,
+      please also consider to change it in
+      app/views/layouts/login.html.erb --- it's the user-login form %>
+  <title>OpenMetrics <%= controller.controller_name %> <%= controller.action_name %></title>
+  <%= stylesheet_link_tag 'application' %>
+  <%= stylesheet_link_tag 'jquery.themes.css' %>
+  <%= stylesheet_link_tag 'jquery.jnotify.css' %>
+
+  <%= yield :scripts %>
+  <%= javascript_include_tag "json2" %>
+  <%= javascript_include_tag "prototype" %>
+  <%= javascript_include_tag "jquery" %>
+  <%#= javascript_include_tag "jquery-1.7.1.min.js" %>
+  <%#= javascript_include_tag "jquery.ui" %>
+  <%= javascript_include_tag "jquery-ui-1.8.9.custom.min" %>
+  <%= javascript_include_tag "jrails" %>
+  <%= javascript_include_tag "jquery.themes" %>
+  <%= javascript_include_tag "jquery.jnotify" %>
+  <%#*this is 0.3 of gritter, see https://github.com/RobinBrouwer/gritter/tree/v0.3%>
+  <%= include_gritter %>
+  <%= javascript_include_tag "application" %>
+  
+  <%#* fancy menu from http://www.filamentgroup.com/examples/menus/index.html %>
+  <%= javascript_include_tag "fg.menu" %>
+  <%= stylesheet_link_tag 'fg.menu.css' %>
+
+</head>
+<body>
+
+  <%#* header with navigation, search box and some other stuff %>
+  <%= render :partial => 'layouts/header' %>
+
+  <%#*click history%>
+  <%= render :partial => "layouts/breadcrumbs" %>
+
+<%#* content from views %>
+<div id="content">
+  <%= yield  %>
+</div>
+<!-- end content area -->
+
+
+<%#* eden space for newly created DOM objects %>
+<div id="eden"></div>
+
+  <%#* notifications %>
+  <%= render :partial => 'layouts/notification' %>
+
+</body>
+</html>

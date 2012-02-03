@@ -1,0 +1,30 @@
+<%#*NOT USED, as accept_nested_attributes isn't used atm%>
+
+
+<%# f.inputs do %>
+  <%#= f.input :top, :label => 'Top' %>
+  <%#= f.input :left, :label => 'Left' %>
+  <%#= f.input :sizex, :label => 'Size x' %>
+  <%#= f.input :sizey, :label => 'Size y' %>
+  <%#= f.input :zindex, :label => 'Z index' %>
+  <%#= f.input :preferences, :label => 'Preferences' %>
+<%# end %>
+
+<%# f.buttons %>
+
+
+
+
+
+
+    <%= f.label :top, "widget position top (px)" %><br />
+    <%= f.text_field :top %><br />
+    <%= f.label :left, "widget position left (px)" %><br />
+    <%= f.text_field :top %><br />
+    <%= f.label :sizex, "widget width (px)" %><br />
+    <%= f.text_field :sizex %><br />
+    <%= f.label :sizey, "widget height (px)" %><br />
+    <%= f.text_field :sizey %>
+
+
+  <%= f.submit "Save" %>

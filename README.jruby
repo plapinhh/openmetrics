@@ -1,0 +1,43 @@
+====== JRuby and Tomcat ======
+[building]
+  * get latest jruby binary
+cd /tmp
+wget http://jruby.org/download/jruby-bin-1.5.0.RC2.tar.gz
+
+
+  * extract to /usr/local and set $PATH
+cd /usr/local
+mv /tmp/jruby-bin-1.5.0.RC2.tar.gz .
+tar xfz jruby-bin-1.5.0.RC2.tar.gz
+ln -s jruby-bin-1.5.0.RC2 jruby
+# testing
+/usr/local/jruby/bin/jruby -v
+
+  * install required gems
+export PATH="/usr/local/jruby/bin:$PATH"
+jruby -S gem install -v=2.3.8 rails
+jruby -S gem install jruby-openssl
+jruby -S gem install jruby-ldap
+jruby -S gem install activerecord-jdbcpostgresql-adapter
+jruby -S gem install net-ssh net-sftp
+jruby -S gem install fastercsv
+jruby -S gem install warbler
+jruby -S gem install bb-ruby
+jruby -S gem install ffi rrd-ffi
+jruby -S gem install chronic
+jruby -S gem install packet
+jruby -S gem install -v=3.2.1 friendly_id
+jruby -S gem install -v=2.3.16 will_paginate
+
+<have a look at README for additional gems>
+
+  * configure warble
+e.g. extend: config.gems += ["rack", "activerecord-jdbcpostgresql-adapter", "jruby-openssl", "net-ssh", "bb-ruby", "rrd", "packet", "chronic"]
+
+* build .war file
+cd <rails_project>
+PATH="/usr/local/jruby/bin:$PATH" jruby -S warble
+
+[running app inside tomcat (production)]
+* copy & extract .war file to tomcat/webapps
+* adapt tomcat/webapps/<app>/config/database.yml (see database.yml.tomcat)

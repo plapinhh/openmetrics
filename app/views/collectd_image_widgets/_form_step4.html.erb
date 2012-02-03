@@ -1,0 +1,347 @@
+<%#*The partial is used for adjusting of CollectdImageWidget appearance.%>
+<%#*The form_step3.html and form_step2.html inititate the render call. %>
+<script type="text/javascript">
+  function initCollectdWidgetAppearance (widget) {
+      widget.dialogContainer.find( ".appearance_tabs" ).tabs({ disabled: [2] });
+      //setBackgroundBorder(widget);
+      setWidgetTab (widget);
+      setLegendSettingsTab(widget);
+      setOverviewSettingsTab(widget);
+      setEventsSettingsTab(widget);
+  }
+
+  function openCollectdWidgetAppearance (widget) {
+    setMetricsSettingsTab(widget);
+
+    var buttons = new Object();
+    if (widget.id != "new") {
+      buttons['Save'] = function(){
+        if ((!widget.preferences.metric_preset && !widget.preferences.metrics) || ((widget.preferences.metric_preset && widget.preferences.metric_preset == "") && (widget.preferences.metrics && widget.preferences.metrics.length == 0))) {
+            notify('info', "No metrics have been selected to process!");
+            return;
+        }
+        var formValuesObject = getFormValuesObject(widget);
+        var postdata = {preferences: JSON.stringify(formValuesObject)};
+          postdata['top'] = widget.dialogContainer.find("#tabs-1_step4 .top").val();
+          postdata['left'] = widget.dialogContainer.find("#tabs-1_step4 .left").val();
+          postdata['sizex'] = widget.dialogContainer.find("#tabs-1_step4 .sizex").val();
+          postdata['sizey'] = widget.dialogContainer.find("#tabs-1_step4 .sizey").val();
+        saveWidget(widget.id, 'collectd_image_widgets', postdata, widget.dialogContainer)
+        widget.dialogContainer.dialog('disable');
+      };
+    } else {
+      buttons['Create'] = function() {
+        if ((!widget.preferences.metric_preset && !widget.preferences.metrics) || ((widget.preferences.metric_preset && widget.preferences.metric_preset == "") && (widget.preferences.metrics && widget.preferences.metrics.length == 0))) {
+            notify('info', "No metrics have been selected to process!");
+            return;
+        }
+        widget.dialogContainer.dialog('disable');
+        var formValuesObject = getFormValuesObject(widget);
+        var top = widget.dialogContainer.find("#tabs-1_step4 .top").val();
+        var left = widget.dialogContainer.find("#tabs-1_step4 .left").val();
+        var sizex = widget.dialogContainer.find("#tabs-1_step4 .sizex").val();
+        var sizey = widget.dialogContainer.find("#tabs-1_step4 .sizey").val();
+        createWidget(widget.dialogContainer, "collectd_image_widgets", formValuesObject, top, left, sizex, sizey);
+      };
+    }
+    buttons['Back'] = function() {
+      widget.dialogContainerElements.collectd_widget_form_tabs.tabs("select" , 2 );
+    };
+    widget.dialogContainer.dialog({
+        buttons: buttons
+    });
+  }
+
+  function getFormValuesObject(widget) {
+        var formValuesObject = new Object();
+            formValuesObject['system_id'] = widget.preferences.system_id;
+            formValuesObject['title'] = widget.dialogContainer.find("#tabs-1_step4 .title").val();
+            formValuesObject['metric_value_kind'] = widget.preferences.metric_value_kind;
+            formValuesObject['metrics'] = widget.preferences.metrics;
+            formValuesObject['metric_preset'] = widget.preferences.metric_preset;
+            formValuesObject['show_legend'] = widget.preferences.show_legend;
+            formValuesObject['show_overview'] = widget.preferences.show_overview;
+            formValuesObject['show_events'] = widget.preferences.show_events;
+            formValuesObject['tickFormatter'] = widget.dialogContainer.find('select.tickFormatter').val();
+        if (widget.dialogContainer.find(".static_range_selection input:checkbox").attr("checked")) {
+            formValuesObject['start_date'] = widget.preferences.start_date;
+            formValuesObject['end_date'] = widget.preferences.end_date;
+            formValuesObject['date_range'] = null;
+        }
+        else {
+            formValuesObject['date_range'] = widget.preferences.date_range;
+            formValuesObject['start_date'] = null;
+            formValuesObject['end_date'] = null;
+        }
+        return formValuesObject;
+  }
+
+  function setWidgetTab (widget) {
+      widget.dialogContainer.find( ".appearance_tabs" ).tabs();
+      if (!widget.preferences || !widget.preferences.title) {
+        <%#*var prefs = widget.preferences;%>
+        widget.preferences.title = "Collectd monitoring widget";
+        <%#*widget.preferences.title += " for " + widget.preferences.metrics.length + " system(s)";%>
+        <%#*widget.preferences.title += " in the date range: ";%>
+        <%#*widget.preferences.title += (widget.preferences.start_date) ? widget.preferences.start_date : "";%>
+        <%#*widget.preferences.title += (widget.preferences.end_date) ? " - "+widget.preferences.end_date : "";%>
+        <%#*widget.preferences.title += (widget.preferences.date_range) ? $j('#date_range label').text() : "";%>
+      }
+      widget.dialogContainer.find("#tabs-1_step4 .title").val(widget.preferences.title);
+      if (widget.top) widget.dialogContainer.find("#tabs-1_step4 .top").val(widget.top);
+      if (widget.left) widget.dialogContainer.find("#tabs-1_step4 .left").val(widget.left);
+      if (widget.sizex) widget.dialogContainer.find("#tabs-1_step4 .sizex").val(widget.sizex);
+      if (widget.sizey) widget.dialogContainer.find("#tabs-1_step4 .sizey").val(widget.sizey);
+  }
+
+  function setMetricsSettingsTab (widget) {
+      widget.dialogContainer.find('#tabs-3_step4').empty();
+      if (widget.preferences.system_id && widget.preferences.metrics && widget.preferences.system_id.length > 0 && widget.preferences.metrics.length > 0) {
+        var result = '';
+            result += "<div class='collectdWidgetForm_metrics'>";
+        for (var j=0; j < widget.preferences.system_id.length; j++) {
+            result += '<div class="ui-widget ui-widget-content ui-helper-clearfix ui-corner-all" style="padding: 5px;margin: 5px">';
+            var system_name = widget.dialogContainer.find("select.system_selection option[value='"+widget.preferences.system_id[j]+"']").text().trim();
+            result += '<div class="ui-state-default ui-corner-all ui-tabs-selected ui-state-active" style="padding: 5px;">'+system_name+'</div>';
+            for (var i=0; i < widget.preferences.metrics.length; i++) {
+                result += '<div class="portlet" style="margin: 5px">';
+                result += '   <div class="portlet-header">'+widget.preferences.metrics[i].metric+ '</div>';
+                result += '   <div class="portlet-content">';
+                var color;
+                // line-color
+                if (widget.preferences.metrics[i].metric_settings && widget.preferences.metrics[i].metric_settings[widget.preferences.system_id[j]] && widget.preferences.metrics[i].metric_settings[widget.preferences.system_id[j]].line_color)
+                    color = widget.preferences.metrics[i].metric_settings[widget.preferences.system_id[j]].line_color;
+                else
+                    color = "default";
+                result += '       <div class="line-color ui-helper-clearfix" style="margin-left: 10px;">';
+                result += '         <div style="float:left; margin-left: 10px;width: 140px;">Line color: </div>';
+                result += '         <input type="text" data="' + i + '::' + widget.preferences.system_id[j] + '::line_color"';
+                result += '               value="' + color + '"';
+                result += '               style="';
+                result += '               background-color: ' + color + ';';
+                result += '               color: ' + color + ';';
+                result += '               float:left; margin-left: 10px; height: 20px; width: 70px; cursor: pointer; text-decoration: underline; border: none;" ';
+                result += '               class="color" />';
+
+                result += '       </div>';
+                //end: line-color
+                var width;
+                // line-width
+                if (widget.preferences.metrics[i].metric_settings && widget.preferences.metrics[i].metric_settings[widget.preferences.system_id[j]] && widget.preferences.metrics[i].metric_settings[widget.preferences.system_id[j]].line_width)
+                    width = widget.preferences.metrics[i].metric_settings[widget.preferences.system_id[j]].line_width;
+                else
+                    width = "0.7";
+                result += '       <div class="line_width ui-helper-clearfix" style="margin-left: 10px;">';
+                result += '         <div style="float:left; margin-left: 10px; width: 140px;">Line width (in px): </div>';
+                result += '         <input type="text" data="' + i + '::' + widget.preferences.system_id[j] + '::line_width"';
+                result += '               value="' + width + '"';
+                result += '               style="';
+                result += '               float:left; margin-left: 10px; height: 20px; width: 30px; cursor: pointer; text-decoration: underline; border: none;" ';
+                result += '               class="width" />';
+
+                result += '       </div>';
+                //end: line-width
+                var label;
+                // label
+                if (widget.preferences.metrics[i].metric_settings && widget.preferences.metrics[i].metric_settings[widget.preferences.system_id[j]] && widget.preferences.metrics[i].metric_settings[widget.preferences.system_id[j]].label)
+                    label = widget.preferences.metrics[i].metric_settings[widget.preferences.system_id[j]].label;
+                else
+                    label = system_name + ": " + widget.preferences.metrics[i].metric;
+                result += '       <div class="label ui-helper-clearfix" style="margin-left: 10px;">';
+                result += '         <div style="float:left; margin-left: 10px; width: 140px;">Label: </div>';
+                result += '         <input type="text" data="' + i + '::' + widget.preferences.system_id[j] + '::label"';
+                result += '               value="' + label + '"';
+                result += '               style="';
+                result += '               float:left; margin-left: 10px; height: 20px; width: 470px; cursor: pointer; text-decoration: underline; border: none;" ';
+                result += '               class="label" />';
+
+                result += '       </div>';
+                //end: label
+
+                result += '   </div>';
+                result += "</div>";
+            }
+            result += "</div>";
+        }
+            result += "</div>";
+        widget.dialogContainer.find('#tabs-3_step4').append(result);
+
+        widget.dialogContainer.find('.collectdWidgetForm_metrics input').focusout(function() {
+          $j(this).css({"text-decoration": "underline"});
+          setMetricSetting(widget, $j(this));
+        }).focusout();
+
+        widget.dialogContainer.find('.collectdWidgetForm_metrics input').focusin(function() {
+          $j(this).css({"text-decoration": "none"});
+        });
+        initColorPicker(widget);
+        initPortlet(widget);
+      }
+      else {
+        widget.dialogContainer.find('#tabs-3_step4').html("No metrics or systems have been selected!");
+      }
+  }
+
+  function setMetricSetting (widget, input) {
+      var input_id = input.attr('data').split('::');
+      var metric = input_id[0];
+      var system_id = input_id[1];
+      var setting = input_id[2];
+      var value = input.val();
+      
+      if (!widget.preferences.metrics[metric].metric_settings)
+          widget.preferences.metrics[metric].metric_settings = {};
+      if (!widget.preferences.metrics[metric].metric_settings[system_id])
+          widget.preferences.metrics[metric].metric_settings[system_id] = {};
+      widget.preferences.metrics[metric].metric_settings[system_id][setting] = value;
+  }
+
+  function setLegendSettingsTab(widget) {
+    if (typeof(widget.preferences.show_legend) !== 'undefined') {
+      if (widget.preferences.show_legend)
+        widget.dialogContainer.find(".show_legend").attr("checked", "checked");
+      else {
+        widget.dialogContainer.find(".show_legend").attr("checked", "");
+      }
+    }
+    widget.dialogContainer.find(".show_legend").bind("change", function () {
+      widget.preferences.show_legend = $j(this).attr("checked");
+    }).change();
+  }
+  function setOverviewSettingsTab(widget) {
+    if (typeof(widget.preferences.show_overview) !== 'undefined') {
+      if (widget.preferences.show_overview)
+        widget.dialogContainer.find(".show_overview").attr("checked", "checked");
+      else {
+        widget.dialogContainer.find(".show_overview").attr("checked", "");
+      }
+    }
+    widget.dialogContainer.find(".show_overview").bind("change", function () {
+      widget.preferences.show_overview = $j(this).attr("checked");
+    }).change();
+  }
+  function setEventsSettingsTab(widget) {
+    if (typeof(widget.preferences.show_events) !== 'undefined') {
+      if (widget.preferences.show_events)
+        widget.dialogContainer.find(".show_events").attr("checked", "checked");
+      else
+        widget.dialogContainer.find(".show_events").attr("checked", "");
+    }
+    widget.dialogContainer.find(".show_events").bind("change", function () {
+      widget.preferences.show_events = $j(this).attr("checked");
+    }).change();
+  }
+
+  function initPortlet (widget) {
+      widget.dialogContainer.find(".collectdWidgetForm_metrics .portlet")
+        .addClass("ui-widget ui-widget-content ui-helper-clearfix ui-corner-all")
+        .find(".portlet-header")
+                .addClass("ui-widget-header")
+                .addClass("ui-corner-all")
+                .prepend('<span class="ui-icon ui-icon-minusthick"></span>')
+                .end()
+        .find(".portlet-content");
+
+      //$j(".portlet-header").css("padding", "4px");
+      widget.dialogContainer.find(".collectdWidgetForm_metrics .portlet-header")
+        .css("cursor", "pointer")
+        .click(function() {
+          $j(this).children(".ui-icon").toggleClass("ui-icon-minusthick").toggleClass("ui-icon-plusthick");
+          $j(this).parents(".portlet:first").children(".portlet-content").toggle();
+          $j('#colorpicker').hide();
+        });
+      widget.dialogContainer.find(".collectdWidgetForm_metrics div.portlet-header").click();
+      widget.dialogContainer.find(".collectdWidgetForm_metrics div.portlet-content").hide();
+  }
+
+  function initColorPicker (widget) {
+      if ($j('#content div.colorpicker').length == 0)
+        widget.dialogContainer.find('.colorpicker').prependTo($j("#content"));
+      else
+        widget.dialogContainer.find('.colorpicker').remove();
+      var farbtastic = $j("#content div.colorpicker div.farbtastic");
+      farbtastic = $j.farbtastic(farbtastic);
+      $j("#content div.colorpicker").hide();
+      
+      widget.dialogContainer.find(".collectdWidgetForm_metrics input.color").focusin(function() {
+          var input = $j(this);
+          farbtastic.linkTo(function () {
+            input.css({
+                backgroundColor: farbtastic.color,
+                color: farbtastic.hsl[2] > 0.5 ? '#000' : '#fff'
+            });
+            input.val(farbtastic.color);
+          });
+          input.change(function() {
+            farbtastic.setColor(input.val());
+          }).change();
+
+          var pos = $j(this).parents("div.line-color").offset();
+          $j("#content div.colorpicker").show();
+          $j("#content div.colorpicker").css({top: (pos.top - 95), left: (pos.left + 250)});
+      });
+    widget.dialogContainer.find(".collectdWidgetForm_metrics input.color").focusout(function() {
+        $j("#content div.colorpicker").hide();
+        $j(this).css({color: $j(this).val()});
+    });
+  }
+</script>
+<style type="text/css">
+  /*.portlet { margin: 0 1em 1em 0; }*/
+  /*.portlet-header { margin: 0.3em; padding-bottom: 4px; padding-left: 0.2em; }*/
+  /*.portlet-header .ui-icon { float: right; }*/
+  .collectdWidgetForm_metrics .portlet-header .ui-icon { float: left; }
+  .collectdWidgetForm_metrics .portlet-content { padding: 0.4em; }
+</style>
+<div class="appearance_selection_container">
+  <div class="appearance_tabs" style='padding: 5px 10px; height:360px; overflow:auto;'>
+          <ul>
+              <li><a href="#tabs-1_step4">Widget</a></li>
+              <li><a href="#tabs-3_step4">Metrics</a></li>
+              <li><a href="#tabs-4_step4">Presets</a></li>
+              <li><a href="#tabs-2_step4">Legend</a></li>
+              <li><a href="#tabs-5_step4">Overview</a></li>
+              <li><a href="#tabs-6_step4">Events</a></li>
+          </ul>
+          <div id="tabs-1_step4" style='padding: 5px 10px; height:305px; overflow:auto;'>
+              <b>Title:</b>
+              <br/>
+                <input type="text" class="title" value=""  style="width: 180px; margin-top: 5px;"/>
+                <br/>
+              <b>Width:</b>
+              <br/>
+                <input type="text" class="sizex" value="500"  style="width: 180px; margin-top: 5px;"/>
+                <br/>
+              <b>Height:</b>
+              <br/>
+                <input type="text" class="sizey" value="400" style="width: 180px; margin-top: 5px;"/>
+                <br/>
+              <b>PosX:</b>
+              <br/>
+                <input type="text" class="top" value="40" style="width: 180px; margin-top: 5px;"/>
+                <br/>
+              <b>PosY:</b>
+              <br/>
+                <input type="text" class="left" value="40" style="width: 180px; margin-top: 5px;"/>
+                <br/>
+          </div>
+          <div id="tabs-2_step4" style='padding: 5px 10px; height:305px; overflow:auto;'>
+            <label for="show_legend">Show legend</label><input type="checkbox" class="show_legend" name="show_legend" checked="checked" />
+          </div>
+          <div id="tabs-3_step4" style='padding: 5px 10px; height:305px; overflow:auto;'>
+          </div>
+          <div id="tabs-4_step4" style='padding: 5px 10px; height:305px; overflow:auto;'>
+          </div>
+          <div id="tabs-5_step4" style='padding: 5px 10px; height:305px; overflow:auto;'>
+            <label for="show_overview">Show overview</label><input type="checkbox" class="show_overview" name="show_overview" checked="checked" />
+          </div>
+          <div id="tabs-6_step4" style='padding: 5px 10px; height:305px; overflow:auto;'>
+            <label for="show_events">Show events</label><input type="checkbox" class="show_events" name="show_events" checked="checked" />
+          </div>
+  </div>
+</div>
+
+
+<div style="position: absolute;" class="colorpicker ui-helper-clearfix" style="display: none">
+  <div class="farbtastic"></div>
+</div>

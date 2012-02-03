@@ -1,0 +1,23 @@
+
+<%#*iterate over flash object%>
+<% flash.each do |type, msg| %>
+<script type="text/javascript">
+  $j(document).ready(function() {
+    $j('#notification').jnotifyAddMessage({
+      text: '<%= msg %>',
+    <% if type.to_s.include? "error" %>
+        permanent: true,
+        type: 'error'
+      <% else %>
+        <%# jnotfiy just knows error and notice by default... TODO extend with other severities %>
+        permanent: false
+      <% end %>
+    });
+  });
+  </script>
+  <% end %>
+
+
+  <div id="notification"></div>
+  
+  <%= gflash %>

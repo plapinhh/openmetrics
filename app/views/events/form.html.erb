@@ -1,0 +1,148 @@
+<%# http://michael.github.com/multiselect/; %>
+<%= stylesheet_link_tag 'ui.multiselect' %>
+<%= javascript_include_tag "ui.multiselect" %>
+
+<%= javascript_tag "var AUTH_TOKEN = #{form_authenticity_token.inspect};" if protect_against_forgery? %>
+<style type="text/css">
+  .portlet { margin: 0 1em 1em 0; }
+  .portlet-header { margin: 0.3em; padding-bottom: 4px; padding-left: 0.2em; }
+  .portlet-header .ui-icon { float: right; }
+  .portlet-content { padding: 0.4em; }
+</style>
+<script type="text/javascript">
+  $j(document).ready(function($) {
+    $j(".portlet").addClass("ui-widget ui-widget-content ui-helper-clearfix ui-corner-all")
+        .find(".portlet-header")
+                .addClass("ui-widget-header ui-corner-all")
+                .prepend('<span class="ui-icon ui-icon-minusthick"></span>')
+                .end()
+        .find(".portlet-content");
+
+    //$j(".portlet-header .ui-icon").css("margins", "3px");
+    $j(".portlet-header").css("padding", "4px");
+    $j(".portlet-header")
+        .css("cursor", "pointer")
+        .click(function() {
+          $j(this).children(".ui-icon").toggleClass("ui-icon-minusthick").toggleClass("ui-icon-plusthick");
+          $j(this).parents(".portlet:first").find(".portlet-content").toggle();
+        });
+
+    $j("#combobox").change(function() {
+      var url = "/events/"+$j(this).val()+"/edit";
+      $j(location).attr('href',url);
+    });
+
+    $j("#eventFields form :input, #eventFields form textarea, #eventFields form select").bind('change', function(event) {
+      $j('#saveEventButton span.ui-icon-alert').remove();
+      $j('<span class="ui-icon ui-icon-alert" style="float:right;"></span>').appendTo($j('#saveEventButton span'));
+      $j('#saveEventButton span.ui-icon ').css({'margin-top': '-3px', 'height': '16px'});
+      $j(this).unbind(event);
+    });
+
+    $j("#saveEventButton").click(function() {
+      paramsString = $j("#eventFields form").serialize();
+
+      var create_affected_systems = $j("#affectedSystems select").children('option[role="system"]').map(function(){
+          if  (this.selected)
+              return $(this).val();
+      }).get();
+      var destroy_affected_systems = $j("#affectedSystems select").children('option[role="affectedSystem"]').map(function(){
+          if  (!this.selected)
+              return $(this).val();
+      }).get();
+
+      $.ajax({
+        type: "POST",
+        url: $j("#eventFields form").attr("action"),
+        data: {
+              create_affected_systems: create_affected_systems,
+              destroy_affected_systems: destroy_affected_systems
+        },
+        success: function(data, textStatus){
+            if(textStatus=="success") {
+              var result = data.responseText;
+              if (result != 'false') {
+                <%#*var event = JSON.parse(data.responseText);%>
+                <%#*var url = $j("#eventFields form").attr("action")+"/"+event.id+"/edit";%>
+                <%#*$j(location).attr('href',url);%>
+                $j(location).attr('href',"/events/");
+              } else {
+                notify('error', "An error occured on saving the event!");
+              }
+            }
+        },
+        error: function(data, textStatus) {
+            notify('error', textStatus + data  );
+        }
+      });
+      $j(this).blur();
+      return false;
+    });
+
+    $j("a.button, button").button();
+    //$j("#editServiceButton").unbind("mouseover, mouseout").removeClass("ui-state-default").addClass("ui-state-active");
+    $j('button.ui-button span, a.ui-button span').css({'margin': '0 1px 1px 0', 'line-height': '0.6', 'padding-bottom': '0.45em', 'padding-top': '0.45em'});
+});
+</script>
+
+
+<h1>Event: <%=h @event.name %></h1>
+
+<div style="position:relative; margin-top: 0px; width: 1000px; margin-left: auto; margin-right: auto;" class="ui-helper-clearfix">
+  <div class="ui-widget services_combobox" style ="float:left;">
+      <%= render :partial => "layouts/combobox", :locals => { :items => Event.find(:all) } %>
+  </div>
+
+
+  <% if @event.id %>
+  
+    <div style ="float:left; margin:5px;"> | </div>
+    <%= link_to 'Delete', @event, :confirm => 'Are you sure?', :method => :delete, :style => "float:left;", :id => "deleteEventButton", :class => "button" %>
+
+    <%#* ... AS THE SHOW VIEW IS NOT IMPLEMENTED (and redirecting to the edit view), there's actually no need for this link %>
+    <%#*<div style ="float:left; margin:5px;"> | </div>%>
+    <%#= link_to 'Back', @event, :style => "float:left;", :id => "backEventButton", :class => "button" %>
+
+  <% end %>
+
+  <div style ="float:left; margin:5px;"> | </div>
+  <%= link_to ((@event.id && 'Save') || "Create"), "#", :style => "float:left;", :id => "saveEventButton", :class => "button" %>
+</div>
+
+<div style="position:relative; margin-top: 10px; width: 1000px; margin-left: auto; margin-right: auto;">
+  <div style="float:left; margin-top: 0px; margin-left: 0px; margin-right: 20px;" >
+
+    <div id="eventFields" class="portlet" style="width: 385px;  margin-right: 0px; margin-bottom: 10px; padding:10px;" >
+      <div class="portlet-header">Event: </div>
+      <div class="portlet-content">
+        <%= render :partial => 'event_form', :object => @event %>
+      </div>
+    </div>
+
+  </div>
+
+  <div style="float:left; margin-top: 0px;" >
+
+    <div id="affectedSystems" class="portlet" style="width: 450px;  margin-right: 0px; margin-bottom: 10px; padding:10px;">
+      <div class="portlet-header">Affected systems: </div>
+      <div class="portlet-content" style="max-height: 400px; overflow: auto;">
+        <%= render "affected_systems_form", :object => @event  %>
+      </div>
+    </div>
+    
+    <div id="affectedSystemGroups" class="portlet" style="width: 450px;  margin-right: 0px; margin-bottom: 10px; padding:10px;">
+      <div class="portlet-header">Affected system groups: </div>
+      <div class="portlet-content" style="max-height: 400px; overflow: auto;">
+        <%#= render "affected_systems_edit", :locals => { :systems => :systems }  %>
+      </div>
+    </div>
+
+    <div id="affectedServices" class="portlet" style="width: 450px;  margin-right: 0px; margin-bottom: 10px; padding:10px;">
+      <div class="portlet-header">Affected services: </div>
+      <div class="portlet-content" style="max-height: 400px; overflow: auto;">
+        <%#= render "affected_systems_edit", :locals => { :systems => :systems }  %>
+      </div>
+    </div>
+    
+  </div>
+</div>

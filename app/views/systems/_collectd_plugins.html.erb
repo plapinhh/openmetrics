@@ -1,0 +1,10 @@
+<%#* included from systems/show.html.erb%>
+<% @system.running_services.each do |rs| %>
+  <div style="margin-bottom: 10px; padding: 5px;color: #333; border: 2px solid #ccc;">
+  <%= rs.service.name %>
+  <% rcps = RunningCollectdPlugin.find :all, :conditions => {:running_service_id => rs.id}, :include => :collectd_plugin %>
+  <% rcps.each do |rcp| %>
+    <div class="ui-state-default"><%= rcp.collectd_plugin.name %></div>
+  <% end %>
+  </div>
+<% end %>

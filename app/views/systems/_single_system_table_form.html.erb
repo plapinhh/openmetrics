@@ -1,0 +1,38 @@
+
+<% remote_form_for @system, :complete=>"$('#{@system.id.to_s}').childElements()[0].childElements()[0].writeAttribute().className='updated';" do |f| %>
+<% running_services = RunningService.find(:all, :conditions => {:system_id => @system.id}) %>
+<table style="table-layout:fixed" id="<%=@system.id.to_s%>" width="100%" border="0" cellpadding="0" cellspacing="0">
+   
+     
+  <tr class="<%= cycle("","ui-state-hover") %>" align="center">
+
+        <td width="16px"><%= link_to '<img src="/images/server16.png" style="border:0px none;">', @system, :style=>"border:0px none;" %></td>
+        
+
+        <td width="15%"><%= f.text_field :name, :style=>'width:95%;' %></td>
+        <td width="9%"><%= f.text_field :ip , :style=>'width:95%;' %></td>
+        <td width="9%"><%= f.text_field :site ,:style=>'width:95%;' %></td>
+        <td width="9%"><%= f.text_field :environment,:style=>'width:95%;' %></td>
+        <td width="13%">
+          <% for running_service in running_services do %>
+            <% name = Service.find(running_service.service_id).name %>
+            <% if name.blank? %>
+              <% name = "ID\#" + running_service.service_id.to_s %>
+            <% end %>
+            <%= link_to name, service_path(running_service.service_id) %>,
+          <% end # running services%>
+          <%= link_to  image_tag("edit_add.png", :style=>"border:none;"), new_running_service_path(:system_id=>@system.id), :popup => ['_blank', 
+'height=400,width=600'] %>
+        </td>
+        <td width="9%"><%= f.text_field :operating_system, :style=>'width:95%;' %></td>
+        <td width="9%"><%= f.text_field :operating_system_flavour, :style=>'width:95%;' %></td>
+        <td width="9%"><%= f.text_field :description, :style=>'width:95%;' %></td>
+        <td width="9%"><%= f.text_field :responsible, :style=>'width:95%;' %></td>
+        <td width="7%"><%= f.submit "Update", :class=>'ui-state-default ui-corner-all' %>&nbsp;&nbsp;<%= link_to_remote 'Back', :url=> {:controller => 'systems', :action=>'get_table', :id=>@system.id},:update=>"#{@system.id}_div" %></td>
+
+      
+
+      </tr>  
+    </table>
+<%end%>
+<%= observe_form "edit_system_"+@system.id.to_s, :function => "$('#{@system.id.to_s}').childElements()[0].childElements()[0].writeAttribute().className='changedv';" %>

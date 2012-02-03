@@ -1,0 +1,194 @@
+<%#*TODO tinymce should only be included if necessary%>
+<%#= javascript_include_tag "tiny_mce/tiny_mce" %>
+
+<%= javascript_include_tag "bbcode" %>
+
+<%# http://michael.github.com/multiselect/ %>
+<%= stylesheet_link_tag 'ui.multiselect' %>
+<%= javascript_include_tag "ui.multiselect" %>
+
+<%# http://http://acko.net/dev/farbtastic %>
+<%= stylesheet_link_tag 'farbtastic/farbtastic' %>
+<%= javascript_include_tag "farbtastic/farbtastic" %>
+
+<%# http://flowplayer.org/tools/index.html %>
+<%#= stylesheet_link_tag 'jquery.tools.min' %>
+<%#= javascript_include_tag "jquery.tools.min" %>
+
+<%= javascript_include_tag "flot/jquery.flot" %>
+<%#= javascript_include_tag "flot/jquery.flot.stack" %>
+<%= javascript_include_tag "flot/jquery.flot.stack.mod" %>
+<%= javascript_include_tag "flot/jquery.flot.selection" %>
+<%#* flot timezone patch, http://code.google.com/p/flot/issues/detail?id=141 %>
+<%= javascript_include_tag "flot/date.js" %>
+<%= javascript_tag "timezoneJS.timezone.zoneFileBasePath = '/javascripts/flot/tz'; timezoneJS.timezone.defaultZoneFile = []; timezoneJS.timezone.init();" %>
+
+<%#* http://blog.meta100.com/post/680263321/mguides %>
+<%= javascript_include_tag "mGuidesUI" %>
+
+<%# http://www.jqplot.com/ %>
+<%#= stylesheet_link_tag 'jqplot/jquery.jqplot' %>
+<%#= javascript_include_tag "jqplot/jquery.jqplot" %>
+<%#= javascript_include_tag 'jqplot/plugins/jqplot.cursor' %>
+<%#= javascript_include_tag 'jqplot/plugins/jqplot.dateAxisRenderer' %>
+
+<%# http://project.yctin.com/checktree/demo/ %>
+<%= stylesheet_link_tag 'jquery.checktree' %>
+<%= javascript_include_tag "jquery.checktree_yctin" %>
+
+<%# http://markitup.jaysalvat.com %>
+<%= stylesheet_link_tag 'markitup/skins/markitup/style' %>
+<%= stylesheet_link_tag 'markitup/sets/bbcode/style' %>
+<%= javascript_include_tag "markitup/jquery.markitup" %>
+<%= javascript_include_tag "markitup/sets/bbcode/set" %>
+
+<%#*http://nicolasgallagher.com/pure-css-speech-bubbles/demo/%>
+<%= stylesheet_link_tag 'css.speech_bubbles' %>
+
+<%# http://www.filamentgroup.com/lab/date_range_picker_using_jquery_ui_16_and_jquery_ui_css_framework/ %>
+<%= stylesheet_link_tag 'ui.daterangepicker' %>
+<%= javascript_include_tag "daterangepicker.jQuery" %>
+
+<%# http://omnipotent.net/jquery.sparkline/ %>
+<%= javascript_include_tag "jquery.sparkline" %>
+
+<%#*TODO openlayers should only be included if necessary%>
+<%#*<link type="text/css" href="/stylesheets/openlayers/style.css" rel="stylesheet" />%>
+<%#*<script src="/javascripts/openlayers/OpenLayers.js"></script>%>
+
+<%= javascript_include_tag "Widget" %>
+<%= javascript_include_tag "TextWidget" %>
+<%= javascript_include_tag "LogtailWidget" %>
+<%= javascript_include_tag "MuninImageWidget" %>
+<%= javascript_include_tag "CollectdImageWidget" %>
+<%= javascript_include_tag "LiveTickerBarWidget" %>
+<%= javascript_include_tag "AlertWidget" %>
+<%#= javascript_include_tag "HalloWorldWidget" %>
+<%#= javascript_include_tag "MapWidget" %>
+
+<%= javascript_include_tag "dashboards.show" %>
+
+<%= javascript_tag "var AUTH_TOKEN = #{form_authenticity_token.inspect};" if protect_against_forgery? %>
+
+<%= javascript_tag "var dashboardId = #{@dashboard.id};"%>
+
+<!-- eden space for ajax content -->
+<div id="eden"></div>
+
+<% content_for :actions do %>
+<%#*hardcoded width as chromium renders delete button somewhere%>
+  <div id="dashboardToolBar" class="ui-helper-clearfix">
+    <div id="editDashboardButtonWrapper" title="Press 'e' key to activate edit mode!" style="float:left">
+      <input type="checkbox" id="editDashboardInput" />
+      <label for="editDashboardInput" checked="">Edit</label>
+    </div>
+    <button id="openWidgetsGalleryDialog" title="Press 'a' key to open add widgets!" style="float:left">Add</button>
+    <button id="deleteWidgetsButton" style="float:left">Delete</button>
+  </div>
+<% end %>
+
+<div id="widgetsGalleryDialog" title="Add widget to dashboard">
+
+  <%#*<p><small>Please select type of widget!</small></p>%>
+
+  <%#*text widget%>
+    <div class="ui-helper-clearfix">
+      <img src="/images/noun_icons/darkgrey/32x32/pencil.png" style="float:left" class="newTextWidget" />
+      <div style="float:left" class="newTextWidget">
+        <h3>Text Widget</h3>
+        <p>Make notes</p>
+      </div>
+    </div>
+
+
+    <%#*collectd image widget%>
+    <% if @collectd_service_available %>
+    <div class="ui-helper-clearfix">
+      <img src="/images/noun_icons/darkgrey/32x32/piechart.png" style="float:left" class="newCollectdImageWidget" />
+
+        <div style="float:left" class="newCollectdImageWidget">
+          <h3>Collectd Image Widget </h3>
+          <p>View and observe metrics within interactive charts. You can visualize
+            associated events and a legend too.
+            The metrics are gathered in an interval of 60 seconds by Collectd.</p>
+        </div>
+      </div>
+    <% end %>
+
+
+      <%#*munin image widget%>
+    <div class="ui-helper-clearfix">
+      <img src="/images/noun_icons/darkgrey/32x32/piechart.png" style="float:left" class="newMuninImageWidget" />
+
+      <div style="float:left;" class="newMuninImageWidget">
+        <h3>Munin Image Widget</h3>
+        <p>Observe systems performance data by static graphs (day, week, month, year).
+          Data collection & graphing is done by munin in an interval of 5 minutes.
+          This widget is <span style="text-decoration: underline">deprecated</span>,
+          please use Collectd Image Widget instead!
+        </p>
+      </div>
+    </div>
+
+
+      <%#*logtail widget%>
+      <div class="ui-helper-clearfix">
+        <img src="/images/noun_icons/darkgrey/32x32/speech.png" style="float:left" class="newLogtailWidget" />
+
+        <div style="float:left" class="newLogtailWidget">
+          <h3>Logtail Widget</h3>
+          <p>Continously follow the output of a remote logfile. This widget is
+            in an <span style="text-decoration: underline">experimental</span>
+            state and may not work for you!
+          </p>
+        </div>
+      </div>
+
+      <%#*LiveTickerBar widget%>
+      <div class="ui-helper-clearfix">
+        <img src="/images/noun_icons/darkgrey/32x32/refresh.png" style="float:left" class="newLiveTickerBarWidget" />
+
+        <div style="float:left" class="newLiveTickerBarWidget">
+          <h3>LiveTickerBar Widget</h3>
+          <p>Continously hold the data for interesting system metrics. This widget is
+            in an <span style="text-decoration: underline">experimental</span>
+            state and may not work for you!
+          </p>
+        </div>
+      </div>
+
+      <%#* alert widget%>
+      <div class="ui-helper-clearfix">
+        <img src="/images/noun_icons/darkgrey/32x32/alarm.png" style="float:left" class="newAlertWidget" />
+
+        <div style="float:left" class="newAlertWidget">
+          <h3>Alert Widget</h3>
+          <p>Shows monitoring alerts for systems. This widget is
+            in an <span style="text-decoration: underline">experimental</span>
+            state and may not work for you!
+          </p>
+        </div>
+      </div>
+
+   
+<!--
+      <div class="ui-helper-clearfix">
+          <img src="/images/noun_icons/darkgrey/32x32/star.png" style="float:left" class="newHalloWorldWidget" />
+
+          <div class="newHalloWorldWidget">
+                  <h3>Hallo World!</h3>
+                  <p>Say 'Hallo' to the World!</p>
+          </div>
+        </div>
+
+        <div class="ui-helper-clearfix">
+          <img src="/images/noun_icons/darkgrey/32x32/star.png" style="float:left" class="newMapWidget" />
+
+          <div class="newMapWidget">
+                  <h3>New MapWidget!</h3>
+                  <p>New MapWidget!</p>
+          </div>
+        </div>
+-->
+
+  </div>

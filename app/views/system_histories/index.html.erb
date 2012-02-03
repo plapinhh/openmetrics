@@ -1,0 +1,40 @@
+<h1>Listing system_histories</h1>
+
+<table>
+  <tr>
+    <th>CHANGED BY:</th>
+    <th>Name</th>
+    <th>Ip</th>
+    <th>FQDN</th>
+    <th>Environment</th>
+    <th>Operating system</th>
+    <th>Operating system flavour</th>
+    <th>Description</th>
+    <th>SSH user</th>
+    <th>Running from</th>
+    <th>Running to</th>
+  </tr>
+
+<% for system_history in @system_histories %>
+  <tr>
+    <td><%=h User.find(system_history.last_change_user_id).login unless system_history.last_change_user_id.nil? %></td>
+    <td><%=h system_history.name %></td>
+    <td><%=h system_history.ip %></td>
+    <td><%=h system_history.fqdn %></td>
+    <td><%=h system_history.environment %></td>
+    <td><%=h system_history.operating_system %></td>
+    <td><%=h system_history.operating_system_flavour %></td>
+    <td><%=h system_history.description %></td>
+    <td><%=h system_history.sshuser %></td>
+    <td><%=h system_history.running_from %></td>
+    <td><%=h system_history.running_to %></td>
+    <td><%= link_to 'Show', system_history %></td>
+    <td><%= link_to 'Edit', edit_system_history_path(system_history) %></td>
+    <td><%= link_to 'Destroy', system_history, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New system_history', new_system_history_path %>

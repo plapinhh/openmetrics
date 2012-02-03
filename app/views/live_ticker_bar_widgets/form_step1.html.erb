@@ -1,0 +1,116 @@
+<%#*The view is the first step of CollectdImageWidget edit form.%>
+<%#*CollectdImageWidget.js starts a ajax request to collectd_image_widgets_controller to load this view after the edit dialog is opened.%>
+
+<script type="text/javascript">
+  function initLiveTickerBarWidgetSystemSelection (widget) {
+    widget.dialogContainerElements = new Object();
+
+    widget.dialogContainerElements.collectd_widget_form_tabs = widget.dialogContainer.find( ".collectd_widget_form_tabs" );
+    widget.dialogContainerElements.collectd_widget_form_tabs.tabs();
+
+    widget.dialogContainerElements.system_selection = widget.dialogContainer.find("div.system_selection_container select");
+    if (widget.preferences.system_id) {
+      widget.dialogContainerElements.system_selection.val(widget.preferences.system_id);
+    }
+
+    widget.dialogContainerElements.collectd_widget_form_tabs.tabs({
+       select: function(event, ui) {
+         switch ($j(ui.tab).attr("href")) {
+           case '#system_selection_tab':
+             openLiveTickerBarWidgetSystemSelection (widget);
+             return true;
+           break;
+           case '#metric_selection_tab':
+             return requestLiveTickerBarWidgetMetricSelection (widget);
+           break;
+         }
+       }
+    });
+  }
+
+  function openLiveTickerBarWidgetSystemSelection (widget) {
+    var buttons = new Object();
+    buttons['Next'] = function (){
+      widget.dialogContainerElements.collectd_widget_form_tabs.tabs("select" , 1 );
+    };
+    widget.dialogContainer.dialog({
+      buttons: buttons
+    });
+  }
+
+  function requestLiveTickerBarWidgetMetricSelection(widget){
+      if (widget.dialogContainerElements.system_selection.val() === "") {
+        notify('info', "No system has been selected to process!");
+        return false;
+      }
+      else {
+        var no_change = (widget.preferences.system_id == widget.dialogContainerElements.system_selection.val());
+        widget.dialogContainerElements.metric_selection_container = widget.dialogContainer.find('.metric_selection_container');
+        var loaded = (widget.dialogContainerElements.metric_selection_container.length != 0);
+        
+        if (no_change && loaded) {
+          openLiveTickerBarWidgetMetricSelection (widget);
+        }
+        else {
+          widget.preferences.system_id = widget.dialogContainerElements.system_selection.val();
+          widget.dialogContainer.dialog('disable');
+          notify('info', "Metrics are loading...");
+          loadLiveTickerBarWidgetMetricSelection(widget);
+        }
+        
+        return true;
+      }
+  }
+
+  function loadLiveTickerBarWidgetMetricSelection (widget) {
+      widget.preferences.system_id = widget.dialogContainerElements.system_selection.val();
+      $j.ajax({
+        url: '/live_ticker_bar_widgets/form_step2',
+        type: "POST",
+        data: {
+            system_id: widget.preferences.system_id
+        },
+        complete: function(data, textStatus){
+          if(textStatus=="success") {
+            // callback for systems loading; create systems selection input
+            var result = data.responseText;
+            if (result != "false") {
+              widget.dialogContainer.find('#metric_selection_tab').empty().append(result);
+              initLiveTickerBarWidgetMetricSelection (widget);
+              openLiveTickerBarWidgetMetricSelection (widget);
+              widget.dialogContainerElements.collectd_widget_form_tabs.tabs("select" , 1 );
+            }
+            else {
+              notify('info', "<b>Error on loading Collectd metrics for selected system(s)!</b>");
+            }
+          }
+        },
+        error: function(data, textStatus) {
+          notify('info', "<b>Error on loading Collectd metrics for selected system(s)!</b>");
+        }
+      });
+  }
+</script>
+
+<div class="collectd_widget_form_tabs" style='padding: 5px 10px 0px 10px; height:430px; margin: 0px; overflow:hidden;'>
+	<ul>
+		<li><a href="#system_selection_tab">Systems</a></li>
+		<li><a href="#metric_selection_tab">Metrics</a></li>
+	</ul>
+	<div id="system_selection_tab" style='padding: 5px 10px; height:380px; overflow:hidden;'>
+          <div class="system_selection_container ui-helper-clearfix">
+              <strong>Select a system:</strong>
+              <%#*<select name="systems[]" class="system_selection" size="8" multiple="multiple" style="width:870px; height:340px;">%>
+              <select name="systems[]" class="system_selection">
+                  <option value=""></option>
+                  <% for system in @systems %>
+                    <option value="<%=  system.id %>">
+                      <%= system.name %>
+                    </option>
+                  <% end %>
+              </select>
+          </div>
+	</div>
+	<div id="metric_selection_tab" style='padding: 5px 10px; height:380px; overflow:hidden;'>
+        </div>
+</div>

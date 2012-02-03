@@ -1,0 +1,5 @@
+production:
+  adapter: jdbcpostgresql
+  url: jdbc:postgresql://localhost:5432/openmetrics_production
+  username: <%= ENV['OM_DB_USER'] %>
+  password: <%= ENV['OM_DB_PASS'] %>

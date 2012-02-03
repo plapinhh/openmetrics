@@ -1,0 +1,133 @@
+<h1>Categories</h1>
+
+<ul>
+  <li><a href="#status"><span style="vertical-align: middle" class="ui-icon ui-icon-circle-arrow-e inline-ui-icon"></span> Status</a></li>
+  <li><a href="#usermgmt"><span style="vertical-align: middle" class="ui-icon ui-icon-circle-arrow-e inline-ui-icon"></span> User accounts</a></li>
+  <li><a href="#metricsthresholds"><span style="vertical-align: middle" class="ui-icon ui-icon-circle-arrow-e inline-ui-icon"></span> Metrics &amp; Thresholds</a></li>
+</ul>
+
+<br/><br/>
+
+<h1 id="status">Status</h1>
+
+<%#*list of active background rb worker%>
+<h2><a id="backgroundrb">BackgroundRB</a></h2>
+<% @backgroundrb_worker.each do |server| %>
+  <h3>Node <%= server.first.to_s %></h3>
+  <ul>
+    <% unless server.second.nil? %>
+      <% server.second.each do |task| %>
+        <li>Status: <%=  task[:status] %>, Worker: <%= task[:worker] %>, Worker Key: <%= task[:worker_key] %> </li>
+      <% end %>
+    </ul>
+  <% else %>
+    <p </li>
+    <p class="ui-state-error ui-corner-all" style="margin-top: 20px; padding: .7em .7em;">
+      No running worker found!
+    </p>
+  <% end %>
+
+<% end %>
+
+<br/><br/>
+
+<%#*output of server log%>
+<h2><a id="serverlog">Local serverlog</a></h2>
+<p class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: .7em .7em;">
+  <span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>
+  You need to have backgroundrb started, passwordless SSH publickey authentication working and a memcached listening on localhost:11211
+</p>
+<textarea style="width: 100%; min-height: 350px; ">
+  <%= @logtail_cacheoutput %>
+</textarea>
+
+<br/><br/>
+
+
+<%#* currently just a list of registered users%>
+<h1><a id="usermgmt">Manage user accounts</a></h1>
+<table>
+  <tr>
+    <th>Login</th><th>email</th>
+    <% @roles = Role.find(:all) %>
+    <% @roles.each do |role| %>
+      <th><%= role.rolename %> </th>
+    <% end %>
+    <th>actions</th>
+  </tr>
+  <% for user in @users  %>
+    <tr>
+      <td><%= user.login %></td>
+      <td><%= user.email %></td>
+
+      <% @roles.each do |role| %>
+        <td><%= user.has_role?(role.rolename) ? "YES" : "NO"  %> </td>
+      <% end %>
+
+      <td>
+        <%= link_to "<span style=\"vertical-align: middle\" class=\"ui-icon ui-icon-trash inline-ui-icon\"></span> Delete", user, :confirm => 'Delete user from system?', :method => :delete unless user == @current_user%>
+        <%= link_to "<span style=\"vertical-align: middle\" class=\"ui-icon ui-icon-circle-arrow-e inline-ui-icon\"></span> Show Profile", user %>
+      </td>
+    </tr>
+  <% end  %>
+</table>
+<br />
+<%= link_to "<span style=\"vertical-align: middle\" class=\"ui-icon ui-icon-plusthick inline-ui-icon\"></span> Add user", new_user_path %>
+
+
+<br/><br/>
+
+<h1><a id="metricsthresholds">Manage metrics & thresholds</a></h1>
+<h2>Active metric thresholds</h2>
+<% @thresholds = Threshold.find(:all) %>
+<% @thresholds.each do |threshold| %>
+  <div>
+    <b>Threshold <%=h threshold.name || "#" + threshold.id.to_s %></b>
+    <%= link_to '[show]', threshold_path(threshold) %>
+    <%= link_to '[edit]', edit_threshold_path(threshold) %>
+    <%= link_to '[delete]', threshold, :confirm => 'Delete threshold from system?', :method => :delete %>
+  </div>
+<% end %>
+<br/>
+<%= link_to "<span style=\"vertical-align: middle\" class=\"ui-icon ui-icon-plusthick inline-ui-icon\"></span> Add threshold", new_threshold_path %>
+
+<br/><br/>
+
+<%#*enabled collectd_plugins for each system%>
+<% if @collectd_service_available %>
+  <h2>Available collectd plugins</h2>
+  <ul>
+    <% @collectd_plugins.each do |plugin|  %>
+      <li style="margin-left: 20px; padding: 4px;list-style-type: disc;"><%= plugin.name %></li>
+    <% end %>
+  </ul>
+  <%= link_to "<span style=\"vertical-align: middle\" class=\"ui-icon ui-icon-plusthick inline-ui-icon\"></span> Configure", collectd_plugins_path %>
+
+  <h2>Enabled collectd plugins</h2>
+  <% systems = System.find :all, :include => [:running_services => :service ] %>
+  <%#*all services are just needed for sorting running services by service name%>
+  <% services = Service.find :all %>
+  <% systems.each do |sys| %>
+    <div style="float: left; padding: 4px;margin: 25px; width:250px; border: 2px solid #ccc;">
+      <%= sys.fqdn.nil? ? sys.id : sys.fqdn %>
+      <%#*# sort running services by service name%>
+      <% unless sys.running_services.empty? %>
+        <% sys.running_services.sort! {|a,b| services[services.index{|x|x.id==a.service_id}.to_i].name <=> services[services.index{|x|x.id==b.service_id}.to_i].name} %>
+      <%  end %>
+      <% sys.running_services.each do |rs| %>
+        <div style="margin: 20px; padding: 4px;color: #333; border: 2px solid orange;">
+          <%= rs.service.nil? ? rs.id : rs.service.name %>
+          <% rcps = RunningCollectdPlugin.find :all, :conditions => {:running_service_id => rs.id}, :include => :collectd_plugin %>
+          <% rcps.each do |rcp| %>
+            <div style="margin: 10px;padding: 2px; background-color: #3f6;border: 2px solid green;"><%= rcp.collectd_plugin.name.blank? ? rcp.collectd_plugin.id : rcp.collectd_plugin.name %></div>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+
+<% end %>
+
+<div class="ui-helper-clearfix"></div>
+
+<br/><br/>

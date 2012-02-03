@@ -1,0 +1,16 @@
+<%#
+# To change this template, choose Tools | Templates
+# and open the template in the editor.
+%>
+
+<% @histories = SystemHistory.find(:all, :conditions => {:system_id => @system.id}, :order=> "created_at DESC") %>
+
+
+<% 5.times do |n| %>
+  <% unless @histories[n].nil? %>
+    <span>
+      <%= @histories[n].created_at %> by <%= link_to "<strong>#{User.find(@histories[n].last_change_user_id).login unless @histories[n].last_change_user_id.nil?}</strong>", User.find(@histories[n].last_change_user_id) unless @histories[n].last_change_user_id.nil? %>
+    </span>
+    <br />
+  <% end %>
+<% end %>

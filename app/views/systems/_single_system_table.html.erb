@@ -1,0 +1,33 @@
+<% running_services = RunningService.find(:all, :conditions => {:system_id => @system.id}) %>
+<table id="<%=@system.id.to_s%>" width="100%" border="0" cellpadding="0" cellspacing="0">
+   
+  <tr class="<%= cycle("","ui-state-highlight") %>" align="center">
+
+        <td width="16px"><%= link_to '<img src="/images/server16.png" style="border:0px none;">', @system, :style=>"border:0px none;" %></td>
+        
+
+        <td width="15%"><%=@system.name%></td>
+        <td width="9%"><%=@system.id%></td>
+        <td width="9%"><%=@system.site%></td>
+        <td width="9%"><%=@system.environment%></td>
+        <td width="13%">
+          <% for running_service in running_services do %>
+            <% name = Service.find(running_service.service_id).name %>
+            <% if name.blank? %>
+              <% name = "ID\#" + running_service.service_id.to_s %>
+            <% end %>
+            <%= link_to name, service_path(running_service.service_id) %>,
+          <% end # running services%>
+          <%# link_to  image_tag("edit_add.png", :style=>"border:none;"), new_running_service_path(:system_id=>@system.id), :popup => ['_blank', 
+'height=400,width=600'] %>
+        </td>
+        <td width="9%"><%=@system.operating_system%></td>
+        <td width="9%"><%=@system.operating_system_flavour%></td>
+        <td width="9%"><%=@system.description%></td>
+        <td width="9%"><%=@system.responsible%></td>
+        <td width="7%"><%= link_to_remote('Edit...', {:url=> {:controller => 'systems', :action=>'get_table_form', :id=>@system.id},:update=>"#{@system.id}_div"}, {:class=>'ui-state-default ui-corner-all'}) %></td>
+
+      
+
+      </tr>  
+</table>

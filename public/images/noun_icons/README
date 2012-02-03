@@ -1,0 +1,6 @@
+noun2icon.sh generates png icons with different sizes & colors from nounproject svg
+(http://thenounproject.com/)
+
+to add a new svg, add a line to nounnames.txt and run the script afterwards
+noun_project_531_1.svg,redcross
+bash noun2icon.sh 

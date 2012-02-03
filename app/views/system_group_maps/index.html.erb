@@ -1,0 +1,18 @@
+<h1>Listing system_group_maps</h1>
+
+<table>
+  <tr>
+  </tr>
+
+<% @system_group_maps.each do |system_group_map| %>
+  <tr>
+    <td><%= link_to 'Show', system_group_map %></td>
+    <td><%= link_to 'Edit', edit_system_group_map_path(system_group_map) %></td>
+    <td><%= link_to 'Destroy', system_group_map, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New system_group_map', new_system_group_map_path %>

@@ -1,0 +1,51 @@
+<% if issues.size > 0 %>
+
+  <%#* load and initialize js timeline%>
+  <%= stylesheet_link_tag 'timelinr/css/style' %>
+  <%= javascript_include_tag "jquery.timelinr-0.9.4" %>
+  <script type="text/javascript">
+    $j(document).ready(function($) {
+      $j(function(){
+              $j().timelinr()
+      });
+    });
+  </script>
+
+  <div id="timeline">
+    <ul id="dates">
+        <% issues.sort.reverse.each do |day,i| %>
+          <li><a href="#<%= day.strftime("%d%b%Y") %>"><%= day.strftime("%A, %d %b %Y") %></a></li>
+        <% end %>
+    </ul>
+    <ul id="issues">
+      <% issues.sort.reverse.each do |day,i| %>
+       <li id="<%= day.strftime("%d%b%Y") %>">
+         <% i.group_by { |t| t.created_at.beginning_of_day }.sort.each do |hour, items| %>
+            <% for item in items %>
+              <span><%= item.created_at.strftime("%H:%M:%S") %></span> 
+              <%#*color of severity by css class%>
+              <strong class="<%=  
+                    case item.severity 
+                      when "ERROR"    : "error_alert"
+                      when "WARN" : "warn_alert"
+                    end
+                %>"><%= item.severity %></strong> 
+              <%#*<img src="/stylesheets/timelinr/images/9.png" width="50" height="50" />%>
+              <span>                
+                      <%= item.metric_identifier %> is <%= item.value %>
+              </span>
+              <br/>
+              <% end %>
+          <%  end %>
+       </li>
+      <% end %>
+    </ul>
+    <div id="grad_left"></div>
+    <div id="grad_right"></div>
+    <a href="#" id="next">+</a>
+    <a href="#" id="prev">-</a>
+  </div>
+<% else %>
+  none
+<% end %>
+	

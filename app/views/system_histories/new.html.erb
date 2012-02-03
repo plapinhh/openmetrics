@@ -1,0 +1,61 @@
+<h1>New system_history</h1>
+
+<%= error_messages_for :system_history %>
+
+<% form_for(@system_history) do |f| %>
+  <p>
+    <b>Name</b><br />
+    <%= f.text_field :name %>
+  </p>
+
+  <p>
+    <b>Ip</b><br />
+    <%= f.text_field :ip %>
+  </p>
+
+  <p>
+    <b>Site</b><br />
+    <%= f.text_field :site %>
+  </p>
+
+  <p>
+    <b>Environment</b><br />
+    <%= f.text_field :environment %>
+  </p>
+
+  <p>
+    <b>Operating system</b><br />
+    <%= f.text_field :operating_system %>
+  </p>
+
+  <p>
+    <b>Operating system flavour</b><br />
+    <%= f.text_field :operating_system_flavour %>
+  </p>
+
+  <p>
+    <b>Description</b><br />
+    <%= f.text_field :description %>
+  </p>
+
+  <p>
+    <b>Responsible</b><br />
+    <%= f.text_field :responsible %>
+  </p>
+
+  <p>
+    <b>Running from</b><br />
+    <%= f.datetime_select :running_from %>
+  </p>
+
+  <p>
+    <b>Running to</b><br />
+    <%= f.datetime_select :running_to %>
+  </p>
+
+  <p>
+    <%= f.submit "Create" %>
+  </p>
+<% end %>
+
+<%= link_to 'Back', system_histories_path %>

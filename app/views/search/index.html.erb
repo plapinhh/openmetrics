@@ -1,0 +1,109 @@
+<script type="text/javascript">
+  $j(document).ready(function($) {
+    $j('div#tabs div p a').prepend('<img style="vertical-align:middle;" src="/images/noun_icons/'+iconColor+'/16x16/eye.png" />')
+    $j( "#tabs" ).tabs({});
+  });
+</script>
+
+<% content_for :search do %>
+<%= @search_string %>
+<% end %>
+
+<%#*<div id="search_for" style="display:none;">%>
+<%#= @search_for %>
+<%#*</div>%>
+
+<h2>Search results for: <i><%= @search_string %></i></h2>
+
+<% if @dashboards.size == 0 && @services.size == 0 && @systems.size == 0 && @events.size == 0 %>
+
+  <div style='padding: 5px 0px; font-size: 10px; width: 250px; font-size: 14px; font-weight: bold; color: #333;' >
+    No matches were found!
+  </div>
+
+<% else %>
+
+  <div id="tabs" style='padding: 5px 10px 0px 10px; margin: 0px; overflow:hidden;'>
+          <ul>
+              <% if @systems.size > 0 %><li><a href="#tab-systems">Systems (<%= (@systems.size > 0) ? @systems.size : 0 %> found)</a></li><% end  %>
+              <% if @services.size > 0 %><li><a href="#tab-services">Services (<%= (@services.size > 0) ? @services.size : 0 %> found)</a></li><% end  %>
+              <% if @dashboards.size > 0 %><li><a href="#tab-dashboards">Dashboards (<%= (@dashboards.size > 0) ? @dashboards.size : 0 %> found)</a></li><% end  %>
+              <% if @events.size > 0 %><li><a href="#tab-events">Events (<%= (@events.size > 0) ? @events.size : 0 %> found)</a></li><% end  %>
+          </ul>
+          <% if @systems.size > 0 %>
+            <div id="tab-systems" style='padding: 5px 10px; overflow:hidden;'>
+              <% for system in @systems%>
+                <%
+                  system.name          = system.name.gsub(@search_string, '<b style="background: #ff0;color:#000;">'<<@search_string<<"</b>") if system.name
+                  system.ip            = system.ip.gsub(@search_string, '<b style="background: #ff0;color:#000;">'<<@search_string<<"</b>") if system.ip
+                  system.fqdn          = system.fqdn.gsub(@search_string, '<b style="background: #ff0;color:#000;">'<<@search_string<<"</b>") if system.fqdn
+                  system.description   = system.description.gsub(@search_string, '<b style="background: #ff0;color:#000;">'<<@search_string<<"</b>") if system.description
+                %>
+                <p style='margin: 0; padding: 2px 5px; font-size: 12px; border-bottom: 1px solid #ddd ' >
+                  <a href="/systems/<%=system.id%>" title="Show">
+                    <b>Name:&nbsp;</b><%= system.name %>,
+                    <b>IP:&nbsp;</b><%= system.ip %>,
+                    <b>FQDN:&nbsp;</b><%= system.fqdn %>,
+                    <b>Description:&nbsp;</b><%= system.description %>
+                    <%#*<span class="ui-icon ui-icon-newwin" style="display:inline-block; cursor:pointer;"></span>%>
+                  </a>
+                </p>
+              <% end %>
+            </div>
+          <% end %>
+          <% if @services.size > 0 %>
+            <div id="tab-services" style='padding: 5px 10px; overflow:hidden;'>
+              <% for service in @services%>
+                <%
+                  service.name         = service.name.gsub(@search_string, '<b style="background: #ff0;color:#000;">'<<@search_string<<"</b>") if service.name
+                  service.dns_name     = service.dns_name.gsub(@search_string, '<b style="background: #ff0;color:#000;">'<<@search_string<<"</b>") if service.dns_name
+                  service.type         = service.type.gsub(@search_string, '<b style="background: #ff0;color:#000;">'<<@search_string<<"</b>") if service.type
+                  service.typ         = service.typ.gsub(@search_string, '<b style="background: #ff0;color:#000;">'<<@search_string<<"</b>") if service.typ
+                  service.description  = service.description.gsub(@search_string, '<b style="background: #ff0;color:#000;">'<<@search_string<<"</b>") if service.description
+                %>
+                <p style='margin: 0; padding: 2px 5px; font-size: 12px; border-bottom: 1px solid #ddd ' >
+                  <a href="/services/<%=service.id%>" title="Show">
+                    <b>Name:&nbsp;</b><%= service.name %>,
+                    <b>DNS&nbsp;name:&nbsp;</b><%= service.dns_name %>,
+                    <b>Typ:&nbsp;</b><%= service.typ %>,
+                    <b>Type:&nbsp;</b><%= service.type %>,
+                    <b>Description:&nbsp;</b><%= service.description %>
+                    <%#*<span class="ui-icon ui-icon-newwin" style="display:inline-block;"></span>%>
+                  </a>
+                </p>
+              <% end %>
+            </div>
+          <% end %>
+          <% if @dashboards.size > 0 %>
+            <div id="tab-dashboards" style='padding: 5px 10px; overflow:hidden;'>
+               <% for dashboard in @dashboards%>
+                  <p style='margin: 0; padding: 2px 5px; font-size: 12px; border-bottom: 1px solid #ddd ' >
+                    <a href="/dashboards/<%=dashboard.id%>" title="Show">
+                      <b>Name:&nbsp;</b><%= dashboard.name.gsub(@search_string, '<b style="background: #ff0;color:#000;">'<<@search_string<<"</b>") if dashboard.name %>
+                      <%#*<span class="ui-icon ui-icon-newwin" style="display:inline-block;"></span>%>
+                    </a>
+                  </p>
+                <% end %>
+            </div>
+          <% end %>
+          <% if @events.size > 0 %>
+            <div id="tab-events" style='padding: 5px 10px; overflow:hidden;'>
+               <% for event in @events%>
+                  <p style='margin: 0; padding: 2px 5px; font-size: 12px; border-bottom: 1px solid #ddd ' >
+                    <a href="/events/<%=event.id%>" title="Show">
+                      <b>Title:&nbsp;</b><%= event.name.gsub(@search_string, '<b style="background: #ff0;color:#000;">'<<@search_string<<"</b>") if event.name %>
+                      <b>Start at:&nbsp;</b><%= event.start_at.strftime("%a, %d. %b %Y %H:%M:%S") if event.start_at %>
+                      <b>End at:&nbsp;</b><%= event.end_at.strftime("%a, %d. %b %Y %H:%M:%S") if event.end_at %>
+                      <b>Description:&nbsp;</b><%= event.prefs['description'].gsub(@search_string, '<b style="background: #ff0;color:#000;">'<<@search_string<<"</b>") if event.prefs['description'] %>
+                      <%#*<span class="ui-icon ui-icon-newwin" style="display:inline-block;"></span>%>
+                    </a>
+                  </p>
+                <% end %>
+            </div>
+          <% end %>
+  </div>
+
+<% end %>
+
+
+

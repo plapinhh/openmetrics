@@ -1,0 +1,189 @@
+<%#*The view is the second step of CollectdImageWidget edit form.%>
+<%#*The 'netx button' in the form_step1.html starts a ajax request to collectd_image_widgets_controller to load this view after systems have been chosen.%>
+<script type="text/javascript">
+  function openCollectdWidgetMetricSelection (widget) {
+    var buttons = new Object();
+    buttons['Next'] = function(){
+      widget.dialogContainerElements.collectd_widget_form_tabs.tabs("select" , 2 );
+    };
+    buttons['Back'] = function() {
+      widget.dialogContainerElements.collectd_widget_form_tabs.tabs("select" , 0 );
+    };
+    widget.dialogContainer.dialog({
+      buttons: buttons
+    });
+  }
+
+  function initCollectdWidgetMetricSelection (widget) {
+    widget.dialogContainer.find(".metrics_advanced_container")
+    .addClass("ui-widget ui-widget-content ui-helper-clearfix ui-corner-all")
+    .find(".portlet-header")
+    .addClass("ui-widget-header ui-corner-all")
+    .append('<span class="ui-icon ui-icon-minusthick"></span>')
+    .end()
+    .find(".portlet-content");
+
+    //$j(".portlet-header").css("padding", "4px");
+    widget.dialogContainer.find(".metrics_advanced_container div.portlet-header")
+    .css("cursor", "pointer")
+    .click(function() {
+      $j(this).children(".ui-icon").toggleClass("ui-icon-minusthick").toggleClass("ui-icon-plusthick");
+      $j(this).parents(".portlet:first").children(".portlet-content").toggle();
+    });
+    widget.dialogContainer.find(".metrics_advanced_container div.portlet-header").click();
+    widget.dialogContainer.find(".metrics_advanced_container div.portlet-content").hide();
+
+    var checktree = widget.dialogContainer.find("ul.tree").checkTree();
+
+    widget.dialogContainer.find("ul.tree").bind('click', function() {
+      if (widget.dialogContainer.find("ul.tree").find("div.checkbox.checked ~ input.metrics").size() > 0) {
+        widget.dialogContainer.find("select.metric_presets").val("");
+        widget.preferences.metric_preset = $j("select.metric_presets").val();
+        widget.preferences.metrics = getMetricsArray(widget);
+      } else
+        widget.preferences.metrics = false;
+    });
+    
+    widget.dialogContainer.find("select.metric_presets").bind('change', function() {
+      if ($j(this).val() != "") {
+        widget.preferences.metrics = [];
+        widget.dialogContainer.find('metric_selection_container').find('input[type=checkbox]').val(false);
+        checktree.clear();
+        checktree.update();
+        widget.preferences.metric_preset = widget.dialogContainer.find("select.metric_presets").val();
+      } else
+        widget.preferences.metric_preset = false;
+    });
+    
+    widget.dialogContainer.find('input[name="metric_value_kind"]').bind('change', function() {
+      widget.preferences.metric_value_kind = widget.dialogContainer.find('input[name="metric_value_kind"]:checked').val();
+    }).trigger('change');
+
+    if (widget.preferences.metric_preset){
+      widget.dialogContainer.find("select.metric_presets").val(widget.preferences.metric_preset);
+    }
+
+    if (widget.preferences.metrics && widget.preferences.metrics.length > 0) {
+      widget.dialogContainer.find(".metrics_advanced_container div.portlet-header").click();
+      var metrics = widget.preferences.metrics;
+      $j.each(metrics, function (index, item) {
+        widget.dialogContainer.find("#"+item.metric).attr("checked", "checked");
+        widget.dialogContainer.find("#"+item.metric).attr("metric_settings", JSON.stringify(item.metric_settings));
+      });
+      checktree.update();
+    }
+    
+    if (widget.preferences.metric_value_kind) {
+      widget.dialogContainer.find('input[name="metric_value_kind"]').val([widget.preferences.metric_value_kind]);
+    }
+
+    if (widget.preferences.tickFormatter) {
+      widget.dialogContainer.find('select.tickFormatter').val(widget.preferences.tickFormatter);
+    }
+
+    widget.dialogContainer.dialog('enable');
+  }
+
+  function getMetricsArray (widget) {
+    var result = new Array();
+    widget.dialogContainer.find("ul.tree").find("div.checkbox.checked ~ input.metrics").each(function(){
+      var metric = new Object();
+      metric.metric = $j(this).attr("id");
+      metric.metric_options = JSON.parse($j(this).attr("metric_options"));
+      metric.metric_settings = JSON.parse($j(this).attr("metric_settings"));
+      result.push(metric);
+    });
+    return result;
+  }
+</script>
+<style type="text/css">
+  /*.portlet { margin: 0 1em 1em 0; }*/
+  /*.portlet-header { margin: 0.3em; padding-bottom: 4px; padding-left: 0.2em; }*/
+  /*.portlet-header .ui-icon { float: right; }*/
+  .portlet-header .ui-icon { float: left; }
+  .portlet-content { padding: 0.4em; }
+</style>
+<div class="metric_selection_container">
+  <% if @metric_presets.size > 0 %>
+    <div class="preset_selection_container">
+      <strong>Select a metrics preset:</strong>
+      <select class="metric_presets" name="metric_presets" style="width: 300px;margin-left: 15px;">
+        <option value=""></option>
+  <%# for metric in @metric_presets %>
+        <% @metric_presets.each do |preset| %>
+          <option value="<%=  preset %>" data=""><%= preset %> </option>
+        <% end %>
+      </select>
+    </div>
+  <% end %>
+
+
+  <div class="value_kind_container">
+    <span>
+      <b>Kind of value:</b>
+      <input type="radio" name="metric_value_kind" value="average" style="margin-left: 15px;" checked="checked"></input>
+      <span>average</span>
+      <input type="radio" name="metric_value_kind" value="min" style="margin-left: 15px;"></input>
+      <span>min</span>
+      <input type="radio" name="metric_value_kind" value="max" style="margin-left: 15px;"></input>
+      <span>max</span>
+    </span>
+  </div>
+
+  <div class="metrics_advanced_container portlet" style="margin-right: 0px; margin-top: 0px;">
+    <div class="portlet-header"><b>Metrics advanced</b></div>
+    <div class="portlet-content">
+      <div class="value_unit_container">
+        <b>Unit of value:</b>
+        <select class="tickFormatter">
+          <option value="value" selected="issues">value</option>
+          <option value="bytes">bytes</option>
+          <option value="bits">bits</option>
+          <option value="jiffies">jiffies</option>
+          <option value="percents">percents</option>
+          <option value="time">seconds</option>
+          <option value="issues">issues</option>
+          <option value="ops">ops</option>
+          <option value="merged_ops">merged_ops</option>
+        </select>
+      </div>
+      <ul class="tree" style="height:280px; overflow:auto;">
+<%# metrics_grouped_by_metric_group = @metrics.group_by{|m| m.options[:metric_group]} %>
+        <% metrics_grouped_by_metric_group = @metrics.group_by{|m| m['metric_options']['metric_group']} %>
+        <% metrics_grouped_by_metric_group.each do |metric_group, metrics| %>
+
+          <li>
+            <input type="checkbox"></input>
+            <label><%= metric_group %></label>
+            <ul>
+  <%# metrics_grouped_by_metric_rrd = metrics.group_by{|m| m.options[:metric_rrd]} %>
+              <% metrics_grouped_by_metric_rrd = metrics.group_by{|m| m['metric_options']['metric_rrd']} %>
+              <% metrics_grouped_by_metric_rrd.each do |metric_rrd, metrics| %>
+                <li>
+                  <input type="checkbox"></input>
+                  <label><%= metric_rrd %></label>
+                  <ul>
+                    <% metrics.each do |metric|%>
+                      <li>
+      <%#= metric.name %>
+                        <input type="checkbox" id="<%= metric['metric'] %>"
+                               class="metrics"
+      <%#=h metric.options.to_json() if metric.options %>
+                               metric_options="<%=h metric['metric_options'].to_json() if metric['metric_options'] %>"
+                               metric_settings="{}"
+                               ></input>
+      <%#= metric.name %>
+                        <label><%= metric['metric'] %></label>
+                      </li>
+                    <% end %>
+                  </ul>
+                </li>
+              <% end %>
+            </ul>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  </div>
+
+</div>

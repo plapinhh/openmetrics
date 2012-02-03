@@ -1,0 +1,28 @@
+<h1>Listing running_service_histories</h1>
+
+<table>
+  <tr>
+    <th>System</th>
+    <th>Service</th>
+    <th>Running service</th>
+    <th>Running from</th>
+    <th>Running to</th>
+  </tr>
+
+<% for running_service_history in @running_service_histories %>
+  <tr>
+    <td><%=h running_service_history.system_id %></td>
+    <td><%=h running_service_history.service_id %></td>
+    <td><%=h running_service_history.running_service_id %></td>
+    <td><%=h running_service_history.running_from %></td>
+    <td><%=h running_service_history.running_to %></td>
+    <td><%= link_to 'Show', running_service_history %></td>
+    <td><%= link_to 'Edit', edit_running_service_history_path(running_service_history) %></td>
+    <td><%= link_to 'Destroy', running_service_history, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New running_service_history', new_running_service_history_path %>

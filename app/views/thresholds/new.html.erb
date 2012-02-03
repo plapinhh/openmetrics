@@ -1,0 +1,49 @@
+<%# http://michael.github.com/multiselect/ %>
+<%= stylesheet_link_tag 'ui.multiselect' %>
+<%= javascript_include_tag "ui.multiselect" %>
+
+<script type="text/javascript">
+  $j(document).ready(function($) {
+    $j("select").multiselect();
+  });
+</script>
+<h1>Create new threshold</h1>
+
+<%= error_messages_for :threshold %>
+<%# form_for :threshold, :url => {:action => "create"} do |f| %>
+<% form_for @threshold do |f| %>
+  <p>Name <%= f.text_field :name %></p>
+
+  <h2>Metrics selection:</h2>
+  <h3>Please reduce threshold definition</h3>
+  <p>by system<br/>
+    <%=  f.collection_select :system_filter_ids, @systems, :id_s, :name, {}, { :selected => @threshold.system_filter_ids, :multiple => true, :style => "width: 900px; min-height: 100px;" } %>
+  </p>
+  and by metric identifier
+  <p>
+    <% metrics = Metric.all.map { |m| m.to_s_identifier } %>
+    <%=  f.collection_select :metric_identifiers, metrics, :to_s, :to_s,  {}, { :selected => @threshold.metric_identifiers, :multiple => true, :style => "width: 900px; min-height: 100px;" } %>
+  </p>
+  <b>or</b> by metric filter defined as RegEx to apply on the full metric identifier (hostname/group/plugin/ds):
+  <p>
+    <%= f.text_field :metric_filter %></p>
+
+  <div class="ui-helper-clearfix">
+    <div style="float: left;width:400px;">Warning Max: <%= f.text_field :warning_max %></div>
+    <div style="float: left;">Warning Min: <%= f.text_field :warning_min %></div>
+  </div>
+
+  <div class="ui-helper-clearfix">
+    <div style="float: left;width:400px;">Failure Max: <%= f.text_field :failure_max %></div>
+    <div style="float: left;">Failure Min: <%= f.text_field :failure_min %></div>
+  </div>
+<br />
+  <div class="ui-helper-clearfix">
+    <div style="float: left;width:200px;"><%= f.check_box :invert_values %> Invert values</div>
+    <div style="float: left;width:200px;"><%= f.check_box :percentage %> Percentage</div>
+    <div style="float: left;"><%= f.check_box :persist %> Persist</div>
+  </div>
+<br/>
+  
+  <p><%= submit_tag 'Create' %></p>
+<% end %>

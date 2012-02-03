@@ -1,0 +1,32 @@
+<script type="text/javascript">
+  $j(document).ready(function($) {
+    $j("#eventFields form").submit(function (){return false;}) ;
+  });
+</script>
+<% form_for(@event) do |f| %>
+  <% if @event.new_record? %>
+    <input name="commit" type="hidden" value="create" />
+  <% end %>
+   <% unless Time.zone.now.gmtoff == 0 %>
+   <p class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: .7em .7em;">
+      <span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>
+        All displayed time data is automatically formatted for your timezone (<%= @current_user.time_zone %>).<br/><small>Server time now is <%= Time.now.gmtime %> with offset <% Time.zone = @current_user.time_zone %><%= Time.zone.now.gmtoff %> seconds to <%= @current_user.time_zone || "no timezone set" %></small>
+  </p>
+  <% end %>
+  <p>
+    <%= f.label :start_at %><br />
+    <%= f.datetime_select :start_at %>
+  </p>
+  <p>
+    <%= f.label :end_at %><br />
+    <%= f.datetime_select :end_at %>
+  </p>
+  <p>
+    Title<br />
+    <%= text_field_tag('preferences[title]', ((@event.preferences && ActiveSupport::JSON.decode(@event.preferences) && ActiveSupport::JSON.decode(@event.preferences)['title']) || ""), :style => "width:100%;") %>
+  </p>
+  <p>
+    Description<br />
+    <%= text_area_tag('preferences[description]', ((@event.preferences && ActiveSupport::JSON.decode(@event.preferences) && ActiveSupport::JSON.decode(@event.preferences)['description']) || ""), :style => "width:100%;height:300px;") %>
+  </p>
+<% end %>

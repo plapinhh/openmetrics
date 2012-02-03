@@ -1,0 +1,38 @@
+<p>
+  <b>Name:</b>
+  <%=h @service_history.name %>
+</p>
+
+<p>
+  <b>Typ:</b>
+  <%=h @service_history.typ %>
+</p>
+
+<p>
+  <b>Group:</b>
+  <%=h @service_history.group %>
+</p>
+
+<p>
+  <b>Description:</b>
+  <%=h @service_history.description %>
+</p>
+
+<p>
+  <b>Service:</b>
+  <%=h @service_history.service_id %>
+</p>
+
+<p>
+  <b>Running from:</b>
+  <%=h @service_history.running_from %>
+</p>
+
+<p>
+  <b>Running to:</b>
+  <%=h @service_history.running_to %>
+</p>
+
+
+<%= link_to 'Edit', edit_service_history_path(@service_history) %> |
+<%= link_to 'Back', service_histories_path %>

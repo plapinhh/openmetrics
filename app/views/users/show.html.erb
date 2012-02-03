@@ -1,0 +1,118 @@
+<script type="text/javascript">
+  $j(document).ready(function($) {
+    $j(".portlet").addClass("ui-widget ui-widget-content ui-helper-clearfix ui-corner-all")
+    .find(".portlet-header")
+    .addClass("ui-widget-header ui-corner-all")
+    .prepend('<span class="ui-icon ui-icon-minusthick"></span>')
+    .end()
+    .find(".portlet-content");
+
+    //$j(".portlet-header .ui-icon").css("margins", "3px");
+    $j(".portlet-header").css("padding", "4px");
+    $j(".portlet-header")
+    .css("cursor", "pointer")
+    .click(function() {
+      $j(this).children(".ui-icon").toggleClass("ui-icon-minusthick").toggleClass("ui-icon-plusthick");
+      $j(this).parents(".portlet:first").find(".portlet-content").toggle();
+    });
+  });  
+</script>
+
+<h1 class="ui-component" ><%= @user==@current_user?"Your Profile":"Showing User #{@user.id}"%></h1>
+
+<p>Feel free to customize your user specific settings!</p>
+
+
+<!-- LEFT Column -->
+  <div style="float:left; margin-top: 0px; margin-left: 0px; margin-right: 20px;" >
+    
+    <div id="uiAppearance" class="portlet" style="width: 385px;  margin-right: 0px; margin-bottom: 10px; padding:10px;">
+      <div class="portlet-header">UI appearance: </div>
+      <div class="portlet-content">
+          <h2>Theme</h2>
+          <div id="namedThemes" class="ui-helper-clearfix"></div>
+
+          <a href="#" id="themespreview_link">
+            <span style="vertical-align: middle;" class="ui-icon ui-icon-newwin inline-ui-icon"></span> Show UI elements for choosen theme
+          </a>
+
+          <%#*preview of some ui elements%>
+          <%= render :partial => 'themespreview' %>
+        
+        
+        <h2>Timezone</h2>
+          <% t = Time.zone.now %>
+          Your timezone is <%= (@user==@current_user ? @current_user.time_zone : @user.time_zone) || " not set" %>. It's <%= t.strftime("%A")%>, <%= t.strftime("%d %B %y") %>, <%= t.strftime("%H:%M:%S")%> now, isn't it?
+          <% form_for @user do |f| %>
+            <%= f.time_zone_select :time_zone, ActiveSupport::TimeZone.all %>
+            <%= f.submit('Save') %>
+          <% end %>
+          <small>Server time: <%= Time.now.gmtime.strftime("%d%m%y%H%M%S") %> with offset <% Time.zone = @current_user.time_zone %><%= Time.zone.now.gmtoff %></small>
+      </div>
+    </div>
+    
+    <div id="recentScans" class="portlet" style="width: 385px;  margin-right: 0px; margin-bottom: 10px; padding:10px;">
+      <div class="portlet-header">Recent scan results: </div>
+      <div class="portlet-content">
+          <% unless @recent_scans.empty? %>
+            <ul>
+              <% @recent_scans.each do |scan| %>
+              <li><%= scan.created_at %> <strong>Result: </strong><br/>
+                <p style="overflow:auto;">
+                    <% unless scan.scanresult.nil? %>
+                      <%= html_escape(JSON.parse(scan.scanresult)) %>
+                    <% end %>
+                    <%#= scan.scanresult.inspect %> 
+                </p>
+              </li>
+              <% end %>
+            </ul>
+          <% else %>
+            none yet!<br/>
+          <% end %>
+            <br/>
+            <%= link_to "<span style=\"vertical-align: middle\" class=\"ui-icon ui-icon-circle-arrow-e inline-ui-icon\"></span> Start discovery", :controller=>:systems, :action=>:scan, :user_id=>@current_user.id, :target => "127.0.0.1", :method => :post  %>
+      </div>
+    </div> 
+  
+  </div> <!-- end left column -->
+  
+  
+<!-- RIGHT Column -->
+  <div style="float:left; margin-top: 0px;" >
+    
+
+      <div id="credentials" class="portlet" style="width: 450px;  margin-right: 0px; margin-bottom: 10px; padding:10px;">
+      <div class="portlet-header">Authentication: </div>
+      <div class="portlet-content">
+        <h2>API access</h2>
+        <% if @user.api_is_enabled? %>
+          <p>
+            Your API Key:
+            <strong><%= @user.api_key.empty? ? "unset" : @user.api_key %></strong>
+            <br/><br/>
+            <%= link_to "<span style=\"vertical-align: middle\" class=\"ui-icon ui-icon-refresh inline-ui-icon\"></span> Regenerate", api_key_path, :method => :post %>
+            <%= link_to "<span style=\"vertical-align: middle\" class=\"ui-icon ui-icon-closethick inline-ui-icon\"></span> Disable", api_key_path, :method => :delete %>
+          </p>
+        <% else %>
+          <p>
+            You'll need a unique key to make calls to the API.  Remember to keep this key a secret as it can be used to access your account.
+            <br/><br/>
+            <%= link_to "<span style=\"vertical-align: middle\" class=\"ui-icon ui-icon-circle-arrow-e inline-ui-icon\"></span> Get a key", api_key_path, :method => :post %>
+          </p>
+        <% end %>
+                  
+
+        <h2>SSH public key</h2>
+        <%if @user.sshpubkey.blank? %>
+          <p>Hey<%= @user.name unless @user.name.blank? %>, it appears you did not upload your SSH-Public-Key yet.</p>
+        <% else %>
+          <textarea><%= @user.sshpubkey %></textarea>
+          <br/><br/>
+        <% end %>
+
+        <%= link_to "<span style=\"vertical-align: middle\" class=\"ui-icon ui-icon-plusthick inline-ui-icon\"></span> Upload key", :controller=>:users, :action=>:uploadpubkey, :id=>@current_user.id %>
+      </div>
+    </div>  
+    
+  </div> <!-- end right column -->

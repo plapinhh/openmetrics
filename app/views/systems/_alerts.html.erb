@@ -1,0 +1,5 @@
+<p style="margin: 0px; padding: 2px 5px; font-size: 12px; border-bottom: 1px solid #ddd">
+  <strong><%= alerts.created_at.strftime("%a, %d. %b %Y %H:%M:%S") %></strong>
+  <%= alerts.severity %>
+  <%= alerts.metric_identifier %> is <%= alerts.value %>
+</p>

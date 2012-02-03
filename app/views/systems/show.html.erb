@@ -1,0 +1,166 @@
+<script type="text/javascript">
+  $j(document).ready(function($) {
+    $j(".portlet").addClass("ui-widget ui-widget-content ui-helper-clearfix ui-corner-all")
+    .find(".portlet-header")
+    .addClass("ui-widget-header ui-corner-all")
+    .prepend('<span class="ui-icon ui-icon-minusthick"></span>')
+    .end()
+    .find(".portlet-content");
+
+    //$j(".portlet-header .ui-icon").css("margins", "3px");
+    $j(".portlet-header").css("padding", "4px");
+    $j(".portlet-header")
+    .css("cursor", "pointer")
+    .click(function() {
+      $j(this).children(".ui-icon").toggleClass("ui-icon-minusthick").toggleClass("ui-icon-plusthick");
+      $j(this).parents(".portlet:first").find(".portlet-content").toggle();
+    });
+
+    $j("#systemVariables div.portlet-header .ui-icon, #systemHistory div.portlet-header .ui-icon, #systemKeys div.portlet-header .ui-icon").trigger('click');
+
+    $j("#combobox").change(function() {
+      var url = "/systems/"+$j(this).val();
+      $j(location).attr('href',url);
+    });
+    
+    $j("a.button, button").button();
+    $j('button.ui-button span, a.ui-button span').css({'margin': '0 1px 1px 0', 'line-height': '0.6', 'padding-bottom': '0.45em', 'padding-top': '0.45em'});
+
+    $j('<img src="/images/noun_icons/'+iconColor+'/24x24/linechart.png" />')
+        .attr("title", "Generate dashboard")
+        .css({display:'inline-block', cursor: 'pointer', margin: "2px"})
+        .click(function(){
+            var url = "/systems/generate_dashboard/";
+            $j.ajax({
+               url: url,
+               type: "POST",
+               data: {
+                    id: $j("#system_id").val()
+               },
+               complete: function(data, stat){
+                  if(stat=="success") {
+                     var dashboard =  JSON.parse(data.responseText).dashboard;
+                     $j(location).attr('href',"/dashboards/"+dashboard.id);
+                  }
+               }
+            });
+        })
+        .appendTo("#system_show_toolbar");
+     
+  });
+  
+</script>
+
+<!-- Top HEADER of System Show -->
+<h1>System "<%= @system.name %>" </h1>
+<input type="hidden" id="system_id" name="id" value="<%= @system.id %>" />
+
+<div id="system_show_toolbar" style="position:relative; margin-top: 0px; width: 1000px; margin-left: auto; margin-right: auto;" class="ui-helper-clearfix">
+  <div class="ui-widget systems_combobox" style ="float:left;">
+    <%= render :partial => "layouts/combobox", :locals => { :items => System.find(:all, :order => 'name ASC') } %>
+  </div>
+
+  <div style ="float:left; margin:5px;"> | </div>
+  <%= link_to 'Delete', @system, :confirm => 'Are you sure?', :method => :delete, :style => "float:left;", :id => "deleteSystemButton", :class => "button" %>
+
+  <div style ="float:left; margin:5px;"> | </div>
+  <%= link_to 'Edit', edit_system_path(@system), :style => "float:left;", :id => "editSystemButton", :class => "button" %>
+
+  <div style ="float:left; margin:5px;"> | </div>
+</div>
+
+
+<div style="position:relative; margin-top: 10px; width: 1000px; margin-left: auto; margin-right: auto;">
+
+<!-- LEFT Column of System Show -->
+  <div style="float:left; margin-top: 0px; margin-left: 0px; margin-right: 20px;" >
+    <div id="systemFields" class="portlet" style="width: 385px;  margin-right: 0px; margin-bottom: 10px; padding:10px;" >
+      <div class="portlet-header">System: </div>
+      <div class="portlet-content">
+        <%= render :partial => 'system', :object => @system %>
+      </div>
+    </div>
+    
+    <%#*<div id="systemRelations" class="portlet" style="width: 385px;  margin-right: 0px; margin-bottom: 10px; padding:10px;">%>
+      <%#*<div class="portlet-header">Relations: </div>%>
+      <%#*<div class="portlet-content">%>
+        <%#= render :partial => 'relationsgraph', :object => @gvsvg %>
+      <%#*</div>%>
+    <%#*</div>%>
+
+   <div id="systemGroups" class="portlet" style="width: 385px;  margin-right: 0px; margin-bottom: 10px; padding:10px;">
+      <div class="portlet-header">System groups: </div>
+      <div class="portlet-content">
+        <%= render :partial => 'system_groups', :collection => @system.system_group_maps %>
+      </div>
+    </div>
+
+    <div id="systemVariables" class="portlet" style="width: 385px; margin-right: 0px; margin-bottom: 10px; padding:10px;" >
+      <div class="portlet-header">System variables: </div>
+      <div class="portlet-content">
+        <%= render :partial => 'system_variables/system_variables_table', :object => @system_variables %>
+      </div>
+    </div>
+
+    <%#*<div id="systemHistoryList" class="portlet" style="width: 385px;  margin-right: 0px; margin-bottom: 10px; padding:10px;">%>
+      <%#*<div class="portlet-header">Recent Changes: </div>%>
+      <%#*<div class="portlet-content">%>
+          <%#*temp disables as deletion of user-login can lead to exception%>
+          <%#= render :partial => 'system_histories/history_list', :object => @system %>
+      <%#*</div>%>
+    <%#*</div>%>
+
+    <%#* FIXME check for a service of type "SshService" or so, see CollectdService below%>
+    <% if @system.has_service?(2) %>
+      <div id="systemKeys" class="portlet" style="width: 385px; margin-right: 0px; margin-bottom: 10px; padding:10px;" >
+        <div class="portlet-header">System keys: </div>
+        <div class="portlet-content">
+  <%# Test Display of Keys %>
+          <%= render :partial => "ssh_pubkey_adept/keylist", :object => @keys unless @keys == nil %>
+        </div>
+      </div>
+    <%  end %>
+  </div>
+<!-- /Left Column -->
+
+<!-- Right Column of System Show -->
+  <div style="float:left; margin-top: 0px;" >
+    
+    <div id="systemIssues" class="portlet" style="width: 450px;  margin-right: 0px; margin-bottom: 10px; padding:10px;">
+      <div class="portlet-header">Recent issues: </div>
+      <div class="portlet-content" style="max-height: 500px; overflow: auto;">
+        <%= render :partial => 'issues', :object => @issues_days %>
+      </div>
+    </div>
+
+     <%#*<div id="systemAlerts" class="portlet" style="width: 450px;  margin-right: 0px; margin-bottom: 10px; padding:10px;">%>
+      <%#*<div class="portlet-header">Recent alerts: </div>%>
+      <%#*<div class="portlet-content">%>
+        <%#= render :partial => 'alerts', :collection => @recent_alerts %>
+      <%#*</div>%>
+    <%#*</div>%>
+
+    <div id="systemRunningServices" class="portlet" style="width: 450px;  margin-right: 0px; margin-bottom: 10px; padding:10px;">
+      <div class="portlet-header">Running services: </div>
+      <div class="portlet-content">
+        <%= render :partial => 'running_services', :collection => @system.running_services %>
+      </div>
+    </div>
+
+  <!-- collectd plugins -->
+  <% if @system.has_service_of_type?("CollectdService") %>
+    <div style="clear:both;"></div>
+    <div id="enabledCollectdPlugins" class="portlet" style="width: 450px;  margin-right: 0px; margin-bottom: 10px; padding:10px;">
+      <div class="portlet-header">Metrics: </div>
+      <div class="portlet-content">
+        <%= render :partial => 'collectd_plugins' %>
+      </div>
+    </div>
+  <% end %>
+
+    
+  </div>
+<!-- Right Column -->
+
+
+</div>

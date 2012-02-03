@@ -1,0 +1,22 @@
+<%#
+# To change this template, choose Tools | Templates
+# and open the template in the editor.
+%>
+
+<h2>Keys on this machine</h2>
+
+<table border="1px">
+
+  <tr>
+    <th>Keyowner</th><th>Keytype</th><th>Bits</th><th>Options</th>
+  </tr>
+
+<% for key in @keys do %>
+
+  <tr>
+    <td><%= key[:comment] %></td><td><%= key[:keytype] %></td><td><%= key[:bitsize] %></td><td><%= key[:options] %></td>
+  </tr>
+
+<% end %>
+
+</table>

@@ -1,0 +1,17 @@
+<script type="text/javascript">
+  $j(document).ready(function($) {
+    $j("form.niceforms").submit(function (){return false;}) ;
+    $j("form.niceforms fieldset legend").hide();
+    $j("form.niceforms fieldset dl").addClass("ui-helper-clearfix");
+    $j("form.niceforms fieldset dl dt").css({"display": "inline", "float": "left"});
+    $j("form.niceforms fieldset dl dd").css({"display": "inline", "float": "right"});
+    //$j("form.niceforms label[for='service[created_at]']").parents("dl").hide();
+    //$j("form.niceforms label[for='service[updated_at]']").parents("dl").hide();
+    //$j("form.niceforms input#service_id").parents("dl").hide();
+    $j("form.niceforms input[type='submit']").parents("fieldset").hide();
+  });
+</script>
+<%= htmlform_for @service, :except => [:created_at, :updated_at, :id, :last_change_user_id] %>
+    
+    
+ 

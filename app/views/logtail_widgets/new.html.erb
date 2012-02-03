@@ -1,0 +1,47 @@
+<script type="text/javascript">
+  function openLogtailWidgetSystemSelection (widget) {
+    $j('#logtailWidgetForm_ajax-loader').hide();
+    //if (widget)
+      //$j("#filepath_selection_container input").val(widget.preferences.filepath);
+      //$j("#system_selection_container select").val(widget.preferences.system_id).trigger("change");
+  }
+</script>
+
+<p>This widget allows you to continously show the output of a given file. Please select a filepath, e.g. <em>/tmp/myFile.txt</em>, system & refresh interval.</p>
+<br />
+
+<p id="system_selection_container" class="ui-helper-clearfix">
+  <b  style="float:left">Select a system:</b>
+  <select name="systems[]"  style="float:right">
+        <option value=""></option>
+      <% for system in @systems %>
+        <option value="<%=  system.id %>" ><%= system.name %> </option>
+      <% end %>
+  </select>
+</p>
+
+<%#* TODO add known files to selection list and and auto fill in filepath text input%>
+
+<p id="filepath_selection_container" class="ui-helper-clearfix">
+  <b  style="float:left">Choose filepath:</b>
+  <input id="filepathinput" type="text" style="float:right"></input>
+     <%#*<select name="filepath[]"  style="float:right">%>
+        <%#*<option value=""></option>%>
+        <%#*<option value="">java app log4j</option>%>
+    <%#*</select>%>
+
+</p>
+
+
+
+<p id="refreshinterval_selection_container" class="ui-helper-clearfix">
+  <b  style="float:left">Refresh interval:</b>
+       <select name="filepath[]"  style="float:right">
+        <option value="1">1s</option>
+        <option value="2">2s</option>
+        <option value="5">5s</option>
+        <option value="10">10s</option>
+        <option value="30">30s</option>
+        <option value="60">60s</option>
+    </select>
+</p>

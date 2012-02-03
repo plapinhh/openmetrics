@@ -1,0 +1,134 @@
+<%#*
+
+user-login form
+
+  we want to have the javascript notifications here as well, e.g. if session
+  is expired a hint should be shown to the user
+
+%>
+
+<script type="text/javascript">
+  $j(document).ready(function() {
+    // positions of login elements    
+    $j("#loginbox").position({ my: "center", at: "center", of: window });
+    $j("#loginbox").offset({ top: 150 });
+
+    $j("#openmetrics-banner").position({ my: "left bottom", at: "left top", of: "#loginbox", offset: "0 -5" });
+
+
+    $j("#login").focus();
+
+  });
+</script>
+
+<style type="text/css">
+    #loginbox {
+        width:600px;
+        /*border: 2px solid #F39814;*/
+        border: medium double #ddd;
+        padding: 28px
+    }
+
+    #loginbox h1 {
+        margin-bottom: 42px;
+        display: inline-block;
+        color: #B70000;
+        /*font-family: "Lucida Grande",Lucida;*/
+        font-size:20px;
+        letter-spacing:1px;
+        border: none;
+    }
+
+    #loginbox h1 img {
+       /* margin-right: 10px;*/
+    }
+
+    #loginbox input[type='text'], #loginbox input[type='password'] {
+        border-color: grey;
+        border-color: -moz-use-text-color;
+        border-style:none none dotted;
+        border-width:medium medium 2px;
+        letter-spacing:2px;
+        text-align:center;
+        width:200px;
+    }
+
+
+    /* layouttable */
+    #loginbox table {
+        border: none;
+        width: 600px;
+    }
+
+    #loginbox label {
+        color:gray;
+    }
+
+    #disclaimer {
+        margin-top: 42px;
+        font-size: small;
+        color: gray;
+        padding: 0.7em;
+        background-color: #f3f3f3;    
+        border: 1px solid #ddd;
+    }
+</style>
+
+
+
+
+
+<span id="openmetrics-banner" style="font-family: 'andale mono'; font-size: 42px;">OpenMetrics</span>
+
+
+<div id="loginbox">
+  <h1>
+    <%#*<img src="/images/icon_openlock_50.png" alt="open lock image" />%>
+    <img src="/images/noun_icons/red3/32x32/lock.png" alt="[image of a lock]" style="vertical-align: middle" />
+    <span style="vertical-align: middle">Welcome stranger! Please sign in.</span>
+  </h1>
+
+  
+    <%#*Uncomment this if you want this functionality and remember to set positions%>
+    <%#= label_tag 'remember_me', 'Remember me' %of a user should>
+    <%#= check_box_tag 'remember_me', '1', @remember_me %>
+
+   <table>
+    <% form_tag session_path do -%>
+      <tr>
+        <td><%= text_field_tag 'login', @login %></td>
+        <td><%= password_field_tag 'password', nil %></td>
+        <td><%= image_submit_tag('/images/arrow-right.gif') %></td>
+      </tr>
+      <tr>
+        <td><%= label_tag 'login', 'Your username' %></td>
+        <td><%= label_tag 'password', 'Your password' %></td>
+        <td>
+         
+        </td>
+      </tr>
+      <tr>
+        <td colspan="3">
+          <div id="disclaimer">
+              <img src="/images/noun_icons/darkgrey/16x16/info.png" alt="info" style="vertical-align: middle" />
+              <small  style="vertical-align: middle">Your session will be invalidated automatically on 20 minutes of inactivity. <br/>
+              <%#*<strong>All your data are belong to  <a href="http://openmetrics.net">us</a>.</strong>%>
+            </small>
+          </div>
+        </td>
+      </tr>
+    <% end -%>
+   </table>
+
+
+ <%#*end loginbox%>
+</div>
+
+<%# TODO blame if Internet Explorer User-AGent; add human readable
+          session lifetime to disclaimer %>
+
+
+
+
+
+<% render :partial => 'layouts/notification' %>

@@ -1,0 +1,32 @@
+<script type="text/javascript">
+  $j(document).ready(function($) {
+    $j("select.systems").multiselect();
+    
+    $j("select.multiselect").bind('change', function(event) {
+      $j('#saveEventButton span.ui-icon-alert').remove();
+      $j('<span class="ui-icon ui-icon-alert" style="float:right;"></span>').appendTo($j('#saveEventButton span'));
+      $j('#saveEventButton span.ui-icon ').css({'margin-top': '-3px', 'height': '16px'});
+      $j(this).unbind(event);
+    });
+    $j("a.add-all, a.remove-all").click(function(){$j(this).blur();});
+  });
+</script>
+
+<select class="multiselect systems" multiple="multiple" name="systems[]"  style="width:440px;height:330px;">
+    <% systems = System.find(:all) %>
+    <% affectedSystem = ActiveSupport::JSON.decode(@event.systems) if @event.systems%>
+
+    <% for system in systems %>
+      <option value="<%= system.id %>"
+        <% if affectedSystem && affectedSystem.include?(system.id.to_s) %>
+          selected="selected" role="affectedSystem"
+        <% else %>
+           role="system"
+        <% end %>
+      >
+        <%= system.name %>
+      </option>
+    <% end %>
+      
+</select>
+<br /> <%# the break has some strange side effects with scroll bars of portlets... so, let it in or fix it...%>

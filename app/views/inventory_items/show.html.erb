@@ -1,0 +1,48 @@
+<p>
+  <b>System:</b>
+  <%=h @inventory_item.system_id %>
+</p>
+
+<p>
+  <b>Owner:</b>
+  <%=h @inventory_item.owner %>
+</p>
+
+<p>
+  <b>Contract start date:</b>
+  <%=h @inventory_item.contract_start_date %>
+</p>
+
+<p>
+  <b>Minimum contract running date:</b>
+  <%=h @inventory_item.minimum_contract_running_date %>
+</p>
+
+<p>
+  <b>Initial cost:</b>
+  <%=h @inventory_item.initial_cost %>
+</p>
+
+<p>
+  <b>Monthly cost:</b>
+  <%=h @inventory_item.monthly_cost %>
+</p>
+
+<p>
+  <b>Inv id parship:</b>
+  <%=h @inventory_item.inv_id_parship %>
+</p>
+
+<p>
+  <b>Inv id provider:</b>
+  <%=h @inventory_item.inv_id_provider %>
+</p>
+
+<p>
+  <b>Description:</b>
+  <%=h @inventory_item.description %>
+</p>
+
+
+<%= link_to 'Edit', edit_inventory_item_path(@inventory_item) %> |
+<%= link_to 'Back', inventory_items_path %>

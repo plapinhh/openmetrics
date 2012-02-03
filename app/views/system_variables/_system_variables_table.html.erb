@@ -1,0 +1,14 @@
+<%#
+# To change this template, choose Tools | Templates
+# and open the template in the editor.
+%>
+
+<table class="variables_monospace">
+  <tr>
+    <th colspan="2">Name</th>
+    <th>Value</th>
+  </tr>
+  <% @system_variables.each do |system_variable| %>
+        <%= render :partial=>'system_variables/system_variable_table_row', :locals => { :system_variable => system_variable } %>
+  <%  end %>
+</table>

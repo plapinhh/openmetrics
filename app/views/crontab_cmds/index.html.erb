@@ -1,0 +1,12 @@
+<%#
+# To change this template, choose Tools | Templates
+# and open the template in the editor.
+%>
+
+<%= "index.html" %>
+<% @crontab_cmds.each do |cc| %>
+  <%= cc.inspect %>
+<% end %>
+<% @dom.each do |cc| %>
+  <%= cc.day_of_month %>
+<% end %>

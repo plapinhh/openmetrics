@@ -1,0 +1,14 @@
+<h1>New system group</h1>
+
+<% form_for(@system_group) do |f| %>
+  <%= f.error_messages %>
+
+  <p>System group name:
+  <%= f.text_field :name %></p>
+  
+  <p>
+    <%= f.submit 'Create' %>
+  </p>
+<% end %>
+
+<%= link_to 'Back', system_groups_path %>

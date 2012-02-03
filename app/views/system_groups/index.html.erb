@@ -1,0 +1,21 @@
+<h1>Listing system_groups</h1>
+
+<span class="ui-icon ui-icon-circle-arrow-e inline-ui-icon"></span><%= link_to 'New system group', new_system_group_path %>
+<br/><br/>
+<table>
+  <tr>
+  </tr>
+
+<% @system_groups.each do |system_group| %>
+  <tr>
+    <td><%= link_to "#{system_group.name}", system_group %></td>
+    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+    <td><%= link_to 'Show', system_group %></td>
+    <td><%= link_to 'Edit', edit_system_group_path(system_group) %></td>
+    <td><%= link_to 'Destroy', system_group, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+

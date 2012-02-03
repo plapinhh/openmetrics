@@ -1,0 +1,11 @@
+
+<%= link_to 'Edit', edit_system_group_path(@system_group) %> |
+<%= link_to 'Back', system_groups_path %>
+<br/><br/>
+  <p>System group name:</p>
+  <p><b><%= @system_group.name %></b></p>
+
+<p>Systems in group: </p>
+<% for system_group_map in @system_group.system_group_maps %>
+  <p><b>- <%= link_to "#{system_group_map.system.name}", system_group_map.system %></b></p>
+<% end %>

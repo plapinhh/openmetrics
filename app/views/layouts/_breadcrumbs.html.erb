@@ -1,0 +1,84 @@
+<script type="text/javascript">
+  $j(document).ready(function($) {
+    $j('#breadcrumbs div.breadcrumbs').css({ 'border-right': '1px solid #bbb' });
+    $j('#breadcrumbs').css({ background: 'url("/images/bg_tr_group_headers.png") repeat-x scroll 0 50% #000', 'z-index': 99999, opacity: 0.8 });
+
+    // click event handler for right show/hide button
+    $j("#show_hide_breadcrumbs").bind('click', function() {
+      if ($j(this).is(".show")) {
+        fadeInBreadcrumbs();
+      }
+      else {
+        hideBreadcrumbs();
+      }
+    });
+    // click event handler for left hide button
+    $j("#hide_breadcrumbs").bind('click', function() {
+        hideBreadcrumbs();
+    });
+  });
+  //fades in breadcrumbs; change class and css properties for show/hide button
+  function fadeInBreadcrumbs () {
+      $j('#breadcrumbs').css("width", "100%");
+      $j('.breadcrumbs').fadeIn("slow");
+      $j("#show_hide_breadcrumbs").removeClass("show");
+      $j("#show_hide_breadcrumbs").children("span").removeClass("ui-icon-pin-s").addClass("ui-icon-pin-w");
+      $j("#show_hide_breadcrumbs").attr('title', 'Hide my last activities' );
+      $j("#hide_breadcrumbs").attr('title', 'Hide my last activities' );
+      $j("#show_hide_breadcrumbs").css('border-left', '1px solid #bbb' );
+      // folowing url string contains param 1 that is now not in use and placeholder for user id; within breadcrumbs state could be saved to user's prefs in the future'
+      $j.get('/users/show_breadcrumbs/1');
+  }
+  //fades in breadcrumbs; change class and css properties for show/hide button
+  function showBreadcrumbs () {
+      $j('#breadcrumbs').css("width", "100%");
+      $j('.breadcrumbs').show();
+      $j("#show_hide_breadcrumbs").removeClass("show");
+      $j("#show_hide_breadcrumbs").children("span").removeClass("ui-icon-carat-1-e").addClass("ui-icon-carat-1-w");
+      $j("#show_hide_breadcrumbs").children("span").removeClass("ui-icon-pin-s").addClass("ui-icon-pin-w");
+      $j("#show_hide_breadcrumbs").attr('title', 'Hide my last activities' );
+      $j("#hide_breadcrumbs").attr('title', 'Hide my last activities' );
+      $j("#show_hide_breadcrumbs").css('border-left', '1px solid #bbb' );
+      // folowing url string contains param 1 that is now not in use and placeholder for user id; within breadcrumbs state could be saved to user's prefs in the future'
+      $j.get('/users/show_breadcrumbs/1');
+  }
+
+  //hides breadcrumbs; change class and css properties for show/hide button
+  function hideBreadcrumbs () {
+      $j('#breadcrumbs').css("width", "auto");
+      <%#*$j('.breadcrumbs').hide("slow");%>
+      $j('.breadcrumbs').hide();
+      $j("#show_hide_breadcrumbs").children("span").removeClass("ui-icon-pin-w").addClass("ui-icon-pin-s");
+      $j("#show_hide_breadcrumbs").addClass("show");
+      $j("#show_hide_breadcrumbs").attr('title', 'Show my last activities' );
+      $j("#show_hide_breadcrumbs").css('border-left', 'none' );
+      // folowing url string contains param 1 that is now not in use and placeholder for user id; within breadcrumbs state could be saved to user's prefs in the future'
+      $j.get('/users/hide_breadcrumbs/1');
+  }
+</script>
+
+<%# looks for cookie 'breadcrumbs_show' and invokes breadcrumbs showing or hiding; %>
+<% if cookies[:breadcrumbs_show] == "true" %>
+  <script type="text/javascript">$j(document).ready(function($) {showBreadcrumbs();});</script>
+<% else %>
+  <script type="text/javascript">$j(document).ready(function($) {hideBreadcrumbs();});</script>
+<% end %>
+
+<%#= session[:breadcrumbs].inspect %>
+  <%#*TODO save breadcrumbs to cookie aswell, so a user can proceed working after relogin%>
+<%  if session[:breadcrumbs] %>
+<div id="breadcrumbs_container" class="ui-helper-clearfix">
+  <div id="breadcrumbs" style="float:left;width:100%;" class="ui-helper-clearfix">
+    <div style="float:left;height:18px;" id="hide_breadcrumbs" class="breadcrumbs"><span style="display:inline-block;" class="ui-icon ui-icon-carat-1-w"></span></div>
+      <%  session[:breadcrumbs].each do |breadcrumb|  %>
+        <% unless breadcrumb[0].nil? %>
+          <% title ='Go to '+ ((breadcrumb[1] ? breadcrumb[1] + ' ' : '')  +breadcrumb[0]) %>
+        <% else %>
+          <% title = 'untitled' %>
+        <% end %>
+        <div style="float:left; padding:1px 5px;" class="breadcrumbs"><%= link_to breadcrumb[0], breadcrumb[2], {:style=>'color:#bbb;font-size:12px;', :title => title }  %></div>
+      <%  end %>
+    <div id="show_hide_breadcrumbs" style="float:right; cursor:pointer;height:18px;" class=""><span class="ui-icon ui-icon-pin-s"></span></div>
+  </div>
+</div>
+<% end %>

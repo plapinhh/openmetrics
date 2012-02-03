@@ -1,0 +1,32 @@
+<%#
+# To change this template, choose Tools | Templates
+# and open the template in the editor.
+%>
+
+<h2><%= @user==@current_user?"Upload your pubkey!":"Upload a pubkey for User #{@user.id}"%></h2>
+
+
+<%# ONLY ENABLE KEY UPLOAD FOR OTHER USERS WHEN USER IS MASTER %>
+<% if @user!=@current_user and @current_user.has_role?('master') %>
+  <% form_for @user, :controller => :users, :action => :update do |f| -%>
+
+
+    <p><%= label_tag 'ssh pubkey', 'Paste the SSH Public Key here' %><br/>
+      <%= f.text_area :sshpubkey %></p>
+
+    <p><%= submit_tag 'Save!' %></p>
+    <% end -%>
+
+<% end %>
+
+<% if @user==@current_user %>
+     <% form_for @user, :controller => :users, :action => :update do |f| -%>
+
+
+    <p><%= label_tag 'ssh pubkey', 'Paste your SSH Public Key here' %><br/>
+      <%= f.text_area :sshpubkey %></p>
+
+    <p><%= submit_tag 'Save' %></p>
+    <% end -%>
+
+<% end %>

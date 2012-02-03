@@ -1,0 +1,214 @@
+<%# http://michael.github.com/multiselect/; %>
+<%= stylesheet_link_tag 'ui.multiselect' %>
+<%= javascript_include_tag "ui.multiselect" %>
+
+<%= javascript_tag "var AUTH_TOKEN = #{form_authenticity_token.inspect};" if protect_against_forgery? %>
+
+<script type="text/javascript">
+  $j(document).ready(function($) {
+    $j(".portlet").addClass("ui-widget ui-widget-content ui-helper-clearfix ui-corner-all")
+            .find(".portlet-header")
+                    .addClass("ui-widget-header ui-corner-all")
+                    .prepend('<span class="ui-icon ui-icon-minusthick"></span>')
+                    .end()
+            .find(".portlet-content");
+
+    //$j(".portlet-header .ui-icon").css("margins", "3px");
+    $j(".portlet-header").css("padding", "4px");
+    $j(".portlet-header")
+          .css("cursor", "pointer")
+          .click(function() {
+            $j(this).children(".ui-icon").toggleClass("ui-icon-minusthick").toggleClass("ui-icon-plusthick");
+            $j(this).parents(".portlet:first").find(".portlet-content").toggle();
+          });
+
+    $j("#systemVariables div.portlet-header .ui-icon, #systemHistory div.portlet-header .ui-icon").trigger('click');
+
+    $j("#combobox").change(function() {
+      var url = "/systems/"+$j(this).val()+"/edit";
+      $j(location).attr('href',url);
+    });
+
+    $j("form.niceforms :input").bind('change', function(event) {
+      setAlertForSaveButton();
+      $j(this).unbind(event);
+    });
+
+    $j("#saveSystemButton").click(function() {
+      paramsString = $j("form.niceforms").serialize();
+
+      //iterate over each running service list and fetch attached collectd_plugins
+      $j('ul[id*="rs-"]').each
+
+      var create_running_services = $j("select.running_services").children('option[role="service"]').map(function(){
+          if  (this.selected)
+              return $(this).val();
+      }).get();
+      var destroy_running_services = $j("select.running_services").children('option[role="running_service"]').map(function(){
+          if  (!this.selected)
+              return $(this).val();
+      }).get();
+      var add_system_group_maps = $j("select.system_group_maps").children('option[role="system_group"]').map(function(){
+          if  (this.selected)
+              return $j(this).val();
+      }).get();
+      var destroy_system_group_maps = $j("select.system_group_maps").children('option[role="system_group_map"]').map(function(){
+          if  (!this.selected)
+              return $j(this).val();
+      }).get();
+
+      var add_running_collectd_plugins = $j("div#enabled_collectd_plugins_lists_container ul").children('li.collectd-plugin').map(function(){
+          var add = {};
+          var running_service = $j(this).parent("ul").attr("running_service");
+          var collectd_plugin = $j(this).attr("collectd_plugin");
+          add.running_service = running_service;
+          add.collectd_plugin = collectd_plugin;
+          
+          return add;
+      }).get();
+      
+      var remove_running_collectd_plugins = $j("div#enabled_collectd_plugins_lists_container ul").children('li.disabled').map(function(){
+          return $j(this).attr("running_collectd_plugin");
+      }).get();
+
+      $.ajax({
+        type: "POST",
+        url: $j("form.niceforms").attr("action"),
+        data: {
+              create_running_services: create_running_services,
+              destroy_running_services: destroy_running_services,
+              add_system_group_maps: add_system_group_maps,
+              destroy_system_group_maps: destroy_system_group_maps,
+              add_running_collectd_plugins: add_running_collectd_plugins,
+              remove_running_collectd_plugins: remove_running_collectd_plugins
+         },
+        success: function(data, textStatus){
+            if(textStatus=="success") {
+              <%#*$j('#saveSystemButton span.ui-icon-alert').remove();%>
+              var url = $j("form.niceforms").attr("action")+"/edit";
+              $j(location).attr('href',url);
+            }
+        },
+        error: function(data, textStatus) {
+            notify('error', textStatus + data  );
+        }
+      });
+      $j(this).blur();
+      return false;
+    });
+    
+    $j("a.button, button").button();
+    $j('button.ui-button span, a.ui-button span').css({'margin': '0 1px 1px 0', 'line-height': '0.6', 'padding-bottom': '0.45em', 'padding-top': '0.45em'});
+});
+
+function setAlertForSaveButton() {
+    notify('info', "The changes for system haven't been yet saved!" );
+    $j('#saveSystemButton span.ui-icon-alert').remove();
+    $j('<span class="ui-icon ui-icon-alert" style="float:right;"></span>').appendTo($j('#saveSystemButton span'));
+    $j('#saveSystemButton span.ui-icon ').css({'margin-top': '-3px', 'height': '16px'});
+    
+}
+</script>
+<h1>System "<%= @system.name %>" </h1>
+<div style="position:relative; margin-top: 0px; width: 1000px; margin-left: auto; margin-right: auto;" class="ui-helper-clearfix">
+  <div class="ui-widget systems_combobox" style ="float:left;">
+    <%= render :partial => "layouts/combobox", :locals => { :items => System.find(:all) } %>
+  </div>
+
+  <div style ="float:left; margin:5px;"> | </div>
+  <%= link_to 'Delete', @system, :confirm => 'Are you sure?', :method => :delete, :style => "float:left;", :id => "deleteSystemButton", :class => "button" %>
+
+  <div style ="float:left; margin:5px;"> | </div>
+  <%= link_to 'Back', @system, :style => "float:left;", :id => "backSystemButton", :class => "button" %>
+
+  <div style ="float:left; margin:5px;"> | </div>
+  <%= link_to 'Save', "#", :style => "float:left;", :id => "saveSystemButton", :class => "button" %>
+</div>
+
+<div style="position:relative; margin-top: 10px; width: 1000px; margin-left: auto; margin-right: auto;">
+
+  <!-- Left Column -->
+
+  <div style="float:left; margin-top: 0px; margin-left: 0px; margin-right: 20px;" >
+    <div id="systemFields" class="portlet" style="width: 385px;  margin-right: 0px; margin-bottom: 10px; padding:10px;" >
+      <div class="portlet-header">System: </div>
+      <div class="portlet-content">
+        <%= render :partial => 'system_edit', :object => @system %>
+      </div>
+    </div>
+    <div id="systemVariables" class="portlet" style="width: 385px; margin-right: 0px; margin-bottom: 10px; padding:10px;" >
+      <div class="portlet-header">System variables: </div>
+      <div class="portlet-content">
+        <%= render :partial => 'system_variables/system_variables_table', :object => @system_variables %>
+      </div>
+    </div>
+    
+    <%#*<div id="systemHistory" class="portlet" style="width: 385px; margin-right: 0px; margin-bottom: 10px; padding:10px;" >%>
+      <%#*<div class="portlet-header">System history: </div>%>
+      <%#*<div class="portlet-content">%>     
+      <%#*</div>%>
+    <%#*</div>%>
+    
+    <%#* FIXME check for a service of type "SshService" or so%>
+    <% if @system.has_service?(2) %>
+      <div id="systemKeys" class="portlet" style="width: 385px; margin-right: 0px; margin-bottom: 10px; padding:10px;" >
+        <div class="portlet-header">System keys: </div>
+        <div class="portlet-content">
+  <%# Place my key! %>
+  <%# link_to_remote 'Deploy my Key on this machine' %>
+          <% form_remote_tag :url => url_for(:controller => :ssh_pubkey_adept, :action => :deploykey) do -%>
+            <%= hidden_field_tag :user_id, @current_user.id %>
+            <%= hidden_field_tag :system_id, @system.id %>
+            <div><%= submit_tag 'Deploy my Key on this machine!' %></div>
+          <% end %>
+
+          <% form_remote_tag :url => url_for(:controller => :ssh_pubkey_adept, :action => :removekey) do -%>
+            <%= hidden_field_tag :user_id, @current_user.id %>
+            <%= hidden_field_tag :system_id, @system.id %>
+            <div><%= submit_tag 'Remove my Key from this machine!' %></div>
+          <% end %>
+        </div>
+      </div>
+    <%  end %>
+  </div>
+  <!-- /Left Column -->
+
+
+
+  <!-- Right Column -->
+
+  <div style="float:left; margin-top: 0px;" >
+    <div id="runningServices" class="portlet" style="width: 450px;  margin-right: 0px; margin-bottom: 10px; padding:10px;">
+      <div class="portlet-header">Running services: </div>
+      <div class="portlet-content">
+          <%= render :partial => 'running_services_edit', :object => [@system.running_services, @services] %>
+      </div>
+    </div>
+    <div id="systemGroups" class="portlet" style="width: 450px;  margin-right: 0px; margin-bottom: 10px; padding:10px;">
+      <div class="portlet-header">System groups: </div>
+      <div class="portlet-content">
+        <%= render :partial => 'system_groups_edit', :object => [@system.system_group_maps, @system_groups] %>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Right Column -->
+
+    <!-- collectd plugins -->
+    <%#*FIXME dragging is bogus if this element is placed on the buttom of site; maybe a jquery issue%>
+  <% if @system.has_service_of_type?("CollectdService") %>
+    <div style="clear:both;"></div>
+    <div id="enabledCollectdPlugins" class="portlet" style="width: 880px;  margin-right: 0px; margin-bottom: 10px; padding:10px;">
+      <div class="portlet-header">Enabled collectd plugins: </div>
+      <div class="portlet-content">
+        <%= render :partial => 'collectd_plugins_edit' %>
+      </div>
+    </div>
+  <% end %>
+
+</div>
+
+
+
+
+

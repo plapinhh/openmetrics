@@ -1,0 +1,18 @@
+<p>
+  <b>Name:</b>
+  <%=h @system_variable.name %>
+</p>
+
+<p>
+  <b>Value:</b>
+  <%=h @system_variable.value %>
+</p>
+
+<p>
+  <b>System:</b>
+  <%=h @system_variable.system_id %>
+</p>
+
+
+<%= link_to 'Edit', edit_system_variable_path(@system_variable) %> |
+<%= link_to 'Back', system_variables_path %>

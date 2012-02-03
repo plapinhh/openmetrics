@@ -1,0 +1,124 @@
+<%#*The partial is used for selection of data range in the third step of CollectdImageWidget edit form.%>
+<%#*The form_step1.html inititates the render call. %>
+<script type="text/javascript">
+  function openCollectdWidgetDaterangeSelection (widget) {
+    var buttons = new Object();
+    buttons['Next'] = function(){
+      widget.dialogContainerElements.collectd_widget_form_tabs.tabs("select" , 3 );
+    };
+    buttons['Back'] = function() {
+      widget.dialogContainerElements.collectd_widget_form_tabs.tabs("select" , 1 );
+    };
+    widget.dialogContainer.dialog({
+        buttons: buttons
+    });
+  }
+  
+  function initCollectdWidgetDaterangeSelection (widget) {
+    // override button ids for date range selection to be unique if multiple dialogs are open
+    widget.dialogContainer.find("div.daterange_selection_container input:checkbox, div.daterange_selection_container input:radio").each(function () {
+      $j(this).attr("id", "_"+$j(this).attr("id")+widget.id);
+    });
+    widget.dialogContainer.find("div.daterange_selection_container label").each(function () {
+      $j(this).attr("for", "_"+$j(this).attr("for")+widget.id);
+    });
+
+    if (widget.preferences.date_range && widget.preferences.date_range.length > 0) {
+      widget.dialogContainer.find("input."+widget.preferences.date_range).attr('checked', 'checked');
+      widget.dialogContainer.find('input.daterange_input').hide();
+      widget.preferences.start_date = false;
+      widget.preferences.end_date = false;
+    }
+
+    if (widget.preferences.start_date) {
+      var daterange_input = widget.preferences.start_date;
+      if (widget.preferences.end_date)
+        daterange_input += " - " + widget.preferences.end_date;
+      widget.dialogContainer.find("input.daterange_input").val(daterange_input);
+      widget.dialogContainer.find("input.daterange_button").attr('checked', 'checked');
+    }
+
+    if (!widget.preferences.date_range && !widget.preferences.start_date && !widget.preferences.end_date) {
+      widget.dialogContainer.find("input.lastmonth_range").attr('checked', 'checked');
+      widget.dialogContainer.find('input.daterange_input').hide();
+    }
+
+    widget.dialogContainer.find('div.dynamic_range_selection').buttonset();
+    widget.dialogContainer.find('input.daterange_button').button();
+    
+    widget.dialogContainer.find('input.daterange_input').daterangepicker({
+      arrows: false,
+      appendTo: widget.dialogContainer.find('div.daterange_selection_container div:last'),
+      onOpen: function () {
+        widget.dialogContainer.find('.ui-dialog').css("overflow", "visible");
+        widget.dialogContainer.find('.ui-daterangepickercontain, .ui-daterangepicker, .ui-datepicker').css("display", "block").css("position", "relative").css("top", "0").css("left", "0");
+      },
+      onClose: function () {
+        widget.dialogContainer.find('.ui-dialog').css("overflow", "hidden");
+      },
+      onChange: function () {
+        var dateString = widget.dialogContainer.find("input.daterange_input").val().split("-");
+        if ( Date.parse(dateString[0].trim()) && ( !dateString[1] || (dateString[1] && Date.parse(dateString[1].trim()))) ) {
+          widget.preferences.start_date = dateString[0].trim();
+          if (dateString[1]) widget.preferences.end_date = dateString[1].trim();
+        } 
+      },
+      closeOnSelect: false,
+      earliestDate: Date.parse('today - 12 months'),
+      latestDate: Date.parse('today'),
+      datepickerOptions: {
+        autoSize: true
+      }
+    });
+
+    widget.dialogContainer.find("div.dynamic_range_selection input:radio").bind("change", function () {
+      if ($j(this).attr("checked")) {
+        widget.dialogContainer.find('input.daterange_input').hide();
+        widget.dialogContainer.find('input.daterange_button').attr("checked", "").button('destroy').button();
+      }
+      widget.preferences.date_range = widget.dialogContainer.find("div.dynamic_range_selection input:radio:checked").attr('value');
+    }).change();
+
+    widget.dialogContainer.find("input.daterange_button").bind("change", function () {
+      if ($j(this).attr("checked")) {
+        widget.dialogContainer.find('input.daterange_input').show();
+        widget.preferences.date_range = widget.dialogContainer.find("div.dynamic_range_selection input:radio:checked").attr('value');
+        widget.dialogContainer.find("div.dynamic_range_selection input:radio").attr("checked", "");
+        widget.dialogContainer.find('div.dynamic_range_selection').buttonset();
+      }
+      else {
+        widget.dialogContainer.find("."+widget.preferences.date_range).attr("checked", "checked");
+        widget.dialogContainer.find('div.dynamic_range_selection').buttonset();
+        widget.dialogContainer.find('input.daterange_input').hide();
+      }
+    });
+  }
+</script>
+<div class="daterange_selection_container" style="height:380px; overflow:hidden;">
+  <div class="ui-helper-clearfix">
+    <div style="float:left; margin-top:10px; width: 200px;">
+    Dynamic range selection:
+    </div>
+    <div class="dynamic_range_selection" style="float:left; margin-top:5px;">
+      <input type="radio" class="today_range" value="today_range" id="today_range" name="dynamic" /><label for="today_range">Today</label>
+      <input type="radio" class="lastday_range" value="lastday_range" id="lastday_range" name="dynamic" /><label for="lastday_range">Last day</label>
+      <input type="radio" class="lastweek_range" value="lastweek_range" id="lastweek_range" name="dynamic" /><label for="lastweek_range">Last week</label>
+      <input type="radio" class="lastmonth_range" value="lastmonth_range" id="lastmonth_range" name="dynamic" /><label for="lastmonth_range">Last month</label>
+      <input type="radio" class="last3months_range" value="last3months_range" id="last3months_range" name="dynamic" /><label for="last3months_range">Last 3 months</label>
+      <input type="radio" class="lastyear_range" value="lastyear_range" id="lastyear_range" name="dynamic" /><label for="lastyear_range">Last year</label>
+    </div>
+    <div class="ui-helper-clearfix">
+    </div>
+    <div style="float:left; margin-top:10px; width: 200px;">
+    Static range selection:
+    </div>
+    <div class="static_range_selection" style="float:left; margin-top:5px;">
+      <input type="checkbox" class="daterange_button" id="daterange_button" name="static" /><label for="daterange_button">Static date(range)</label>
+    </div>  
+    <div style="float:left; margin-top:10px;">
+      <input type="text" class="daterange_input" readonly="readonly" />
+    </div>
+  </div>
+  <div class="ui-helper-clearfix">
+  </div>
+</div>

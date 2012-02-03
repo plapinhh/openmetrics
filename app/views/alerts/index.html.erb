@@ -1,0 +1,28 @@
+<h1>Listing alerts</h1>
+
+<div class="apple_pagination">
+      <div clas="page_info">
+    <%= page_entries_info @alerts %>
+  </div>
+  <%= will_paginate @alerts %>
+
+</div>
+
+<% @alerts.each do |alert| %>
+  <%  if (alert.severity == 'ERROR') %>
+    <div class="error_alert">
+  <% elsif (alert.severity == 'WARN') %>
+    <div class="warn_alert">
+  <% end %>
+      
+    <%= alert.created_at.strftime("%a, %d. %b %Y %H:%M:%S") %>
+    <%= link_to alert.system.name, alert.system %>
+    <%=h alert.severity %>
+    <%=h alert.metric_identifier %>
+    <%=h alert.value %>
+  </div>
+<% end %>
+
+<div class="apple_pagination">
+  <%= will_paginate @alerts %>
+</div>

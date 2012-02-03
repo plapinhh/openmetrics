@@ -1,0 +1,22 @@
+<script type="text/javascript">
+  function openAlertWidgetSystemSelection (widget) {
+    $j('#alertWidgetForm_ajax-loader').hide();
+    //if (widget)
+      //$j("#filepath_selection_container input").val(widget.preferences.filepath);
+      //$j("#system_selection_container select").val(widget.preferences.system_id).trigger("change");
+  }
+</script>
+
+<p>This widget shows the latest alerts.</p>
+<br />
+
+<p id="refreshinterval_selection_container" class="ui-helper-clearfix">
+  <b  style="float:left">Refresh interval:</b>
+       <select name="refresh_interval[]"  style="float:right">
+        <option value="10" selected>10s</option>
+        <option value="30">30s</option>
+        <option value="60">1m</option>
+        <option value="120">2m</option>
+        <option value="300">5m</option>
+    </select>
+</p>

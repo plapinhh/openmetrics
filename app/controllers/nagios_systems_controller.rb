@@ -1,0 +1,2 @@
+class NagiosSystemsController < ApplicationController
+end

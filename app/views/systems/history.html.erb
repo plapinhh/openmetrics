@@ -1,0 +1,57 @@
+<%#
+# To change this template, choose Tools | Templates
+# and open the template in the editor.
+%>
+
+CURRENT STATE:
+<table>
+  <tr>
+    <td rowspan="8"><img src="/images/server.png"></td>
+    <td class="odd">Name:</td><td class="odd"><%=h @system.name %></td>
+    <td rowspan="8">
+      <% @current_running_services.each do |rservice|%>
+        <%= Service.find(rservice.service_id).name %>,
+      <% end %>
+    </td>
+  </tr>
+  <tr class="<%= cycle("even","odd")%>"><td>IP:</td><td><%=h @system.ip %></td></tr>
+  <tr class="<%= cycle("even","odd")%>"><td>Site:</td><td><%=h @system.site %></td></tr>
+  <tr class="<%= cycle("even","odd")%>"><td>Environment:</td><td><%=h @system.environment %></td></tr>
+  <tr class="<%= cycle("even","odd")%>"><td>Operating System:</td><td><%=h @system.operating_system %></td></tr>
+  <tr class="<%= cycle("even","odd")%>"><td>Operating System Flavour:</td><td><%=h @system.operating_system_flavour %></td></tr>
+  <tr class="<%= cycle("even","odd")%>"><td>Description:</td><td><%=h @system.description %></td></tr>
+  <tr class="<%= cycle("even","odd")%>"><td>Responsible:</td><td><%=h @system.responsible %></td></tr>
+</table>
+
+<div  id="container" ></div>
+CHANGE HISTORY:
+<table>
+<% @history.each do |e|%>
+<tr class="<%= cycle("even","odd")%>">
+  <td>
+    <% if e.class.to_s == "RunningServiceHistory" %>
+      <% if e.logtype == "CHANGE" %>
+        <%= "changed RunningService #{e.running_service_id}" %>
+      <% end %>
+      <% if e.logtype == "DELETE" %>
+        <%= "deleted RunningService #{e.running_service_id}" %>
+      <% end %> 
+      <% if e.logtype == "CREATE" %>
+        <%= "added RunningService #{e.running_service_id}" %>
+      <% end %> 
+    <% end %>
+    <% if e.class.to_s == "ServiceHistory" %>
+      <%= "changed Service #{e.service_id}" %>
+    <% end %>
+    <% if e.class.to_s == "SystemHistory" %>
+      <%= "changed System Data" %>
+    <% end %>
+  </td><td><%= link_to_remote e.created_at.inspect, :url => { :action => "history", :timestamp => e.created_at.to_f + 1 } %> </td>
+  <% if e.created_at == nil %>
+    <%= e.class %>
+  <% end %>
+</tr>
+<% end %>
+</table>
+
+

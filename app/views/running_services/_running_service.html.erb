@@ -1,0 +1,15 @@
+<%#
+# To change this template, choose Tools | Templates
+# and open the template in the editor.
+%>
+
+
+
+  <% @service = Service.find(@running_service.service_id) %>
+  <tr class="<%= cycle("even","odd")%>">
+  <%= render :partial => "services/service", :object => @service%>
+  <td><%=h @running_service.comment %></td>
+  <td><%= link_to 'Edit', edit_running_service_path(@running_service, :system_id => @running_service.system_id)%></td><td><%= link_to 'Delete', @running_service, :confirm => 'Are you sure?', :method => :delete%></td>
+  </tr>
+
+

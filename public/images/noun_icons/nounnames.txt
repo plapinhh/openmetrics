@@ -1,0 +1,17 @@
+noun_project_233.svg,edit
+noun_project_418.svg,eye
+noun_project_99.svg,lock
+noun_project_45.svg,info
+noun_project_540_1.svg,piechart
+noun_project_304.svg,litter
+noun_project_95.svg,magnifyingglass
+noun_project_89_3.svg,eject
+noun_project_450.svg,paper
+noun_project_307.svg,alarm
+noun_project_166.svg,refresh
+noun_project_457.svg,speech
+noun_project_347_2.svg,pencil
+noun_project_401.svg,calendar
+noun_project_428.svg,star
+noun_project_814.svg,barchart
+noun_project_815.svg,linechart

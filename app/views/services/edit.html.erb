@@ -1,0 +1,118 @@
+<%# http://michael.github.com/multiselect/; %>
+<%= stylesheet_link_tag 'ui.multiselect' %>
+<%= javascript_include_tag "ui.multiselect" %>
+
+<%= javascript_tag "var AUTH_TOKEN = #{form_authenticity_token.inspect};" if protect_against_forgery? %>
+
+<script type="text/javascript">
+  $j(document).ready(function($) {
+    $j(".portlet").addClass("ui-widget ui-widget-content ui-helper-clearfix ui-corner-all")
+        .find(".portlet-header")
+                .addClass("ui-widget-header ui-corner-all")
+                .prepend('<span class="ui-icon ui-icon-minusthick"></span>')
+                .end()
+        .find(".portlet-content");
+
+    //$j(".portlet-header .ui-icon").css("margins", "3px");
+    $j(".portlet-header").css("padding", "4px");
+    $j(".portlet-header")
+        .css("cursor", "pointer")
+        .click(function() {
+          $j(this).children(".ui-icon").toggleClass("ui-icon-minusthick").toggleClass("ui-icon-plusthick");
+          $j(this).parents(".portlet:first").find(".portlet-content").toggle();
+        });
+
+    $j("#combobox").change(function() {
+      var url = "/services/"+$j(this).val()+"/edit";
+      $j(location).attr('href',url);
+    });
+
+    $j("form.niceforms :input").bind('change', function(event) {
+      $j('#saveServiceButton span.ui-icon-alert').remove();
+      $j('<span class="ui-icon ui-icon-alert" style="float:right;"></span>').appendTo($j('#saveServiceButton span'));
+      $j('#saveServiceButton span.ui-icon ').css({'margin-top': '-3px', 'height': '16px'});
+      $j(this).unbind(event);
+    });
+
+    $j("#saveServiceButton").click(function() {
+      paramsString = $j("form.niceforms").serialize();
+
+      var create_running_services = $j("#systemsRunningService select").children('option[role="system"]').map(function(){
+          if  (this.selected)
+              return $(this).val();
+      }).get();
+      var destroy_running_services = $j("#systemsRunningService select").children('option[role="running_service"]').map(function(){
+          if  (!this.selected)
+              return $(this).val();
+      }).get();
+
+      $.ajax({
+        type: "POST",
+        url: $j("form.niceforms").attr("action"),
+        data: {
+              create_running_services: create_running_services,
+              destroy_running_services: destroy_running_services
+         },
+        success: function(data, textStatus){
+            if(textStatus=="success") {
+              $j('#saveServiceButton span.ui-icon-alert').remove();
+              //notify('notice', 'Successfully updated service!');
+              var url = $j("form.niceforms").attr("action")+"/edit";
+              $j(location).attr('href',url);
+            }
+        },
+        error: function(data, textStatus) {
+            notify('error', textStatus + data  );
+        }
+      });
+      $j(this).blur();
+      return false;
+    });
+
+    $j("a.button, button").button();
+    //$j("#editServiceButton").unbind("mouseover, mouseout").removeClass("ui-state-default").addClass("ui-state-active");
+    $j('button.ui-button span, a.ui-button span').css({'margin': '0 1px 1px 0', 'line-height': '0.6', 'padding-bottom': '0.45em', 'padding-top': '0.45em'});
+});
+</script>
+
+
+<h1>Service "<%= @service.name %>" </h1>
+
+<div style="position:relative; margin-top: 0px; width: 1000px; margin-left: auto; margin-right: auto;" class="ui-helper-clearfix">
+  <div class="ui-widget services_combobox" style ="float:left;">
+      <%= render :partial => "layouts/combobox", :locals => { :items => Service.find(:all) } %>
+  </div>
+
+  <div style ="float:left; margin:5px;"> | </div>
+  <%= link_to 'Delete', @service, :confirm => 'Are you sure?', :method => :delete, :style => "float:left;", :id => "deleteServiceButton", :class => "button" %>
+
+  <div style ="float:left; margin:5px;"> | </div>
+  <%= link_to 'Back', @service, :style => "float:left;", :id => "backServiceButton", :class => "button" %>
+
+  <div style ="float:left; margin:5px;"> | </div>
+  <%= link_to 'Save', "#", :style => "float:left;", :id => "saveServiceButton", :class => "button" %>
+</div>
+
+<div style="position:relative; margin-top: 10px; width: 1000px; margin-left: auto; margin-right: auto;">
+  <div style="float:left; margin-top: 0px; margin-left: 0px; margin-right: 20px;" >
+
+    <div id="serviceFields" class="portlet" style="width: 385px;  margin-right: 0px; margin-bottom: 10px; padding:10px;" >
+      <div class="portlet-header">Service: </div>
+      <div class="portlet-content">
+        <%= render :partial => 'service_edit', :object => @service %>
+      </div>
+    </div>
+    
+  </div>
+
+  <div style="float:left; margin-top: 0px;" >
+
+    <div id="systemsRunningService" class="portlet" style="width: 450px;  margin-right: 0px; margin-bottom: 10px; padding:10px;">
+      <div class="portlet-header">Systems running service: </div>
+      <div class="portlet-content" style="max-height: 400px; overflow: auto;">
+        <%= render :partial => 'running_systems_edit', :object => [@running_systems, @systems] %>
+      </div>
+    </div>
+    
+  </div>
+</div>

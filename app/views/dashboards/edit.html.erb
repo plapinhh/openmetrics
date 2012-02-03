@@ -1,0 +1,210 @@
+<script type="text/javascript">
+
+   // Alle Ajax-Requests um authenticity_token und evt. vorhandene Parameter erweitern
+    var params, paramsString;
+
+    $j(document).ajaxSend(function(event, request, settings) {
+        if (typeof(AUTH_TOKEN) == "undefined") return;
+        settings.data = settings.data || "";
+        settings.data += (settings.data ? "&" : "") + "authenticity_token=" + encodeURIComponent(AUTH_TOKEN);
+
+        for (param in params) {
+            settings.data += (settings.data ? "&" : "") + param + "=" + encodeURIComponent(params[param]);
+        }
+        settings.data += (settings.data ? "&" : "") + paramsString;
+    });
+
+
+
+$j(document).ready(function() {
+
+    var zIndexMax = parseInt($j('#zIndexMax').text());
+      $j(".widget").each(function(index, element) {
+          var id = $j(this).attr('id');
+          var widgetIDArr = id.split(/-/);
+          var widgetID = widgetIDArr[widgetIDArr.length-1];
+          var widgetURL = '/widgets/' + widgetID + '';
+
+          // get widget properties
+          $j.ajax({
+               url: widgetURL,
+               dataType:"json",
+               complete: function(data,stat){
+                  if(stat=="success") {
+                    ResponseData = $j.parseJSON(data.responseText);
+
+                    // set position of widget
+                    $j('#widget-'+widgetID).css({top: ResponseData.top, left: ResponseData.left, width: ResponseData.sizex, height: ResponseData.sizey});
+
+                    // fade in widget
+                    $j('#widget-'+widgetID).fadeIn("500");
+                  }
+               }
+            });
+
+
+           // make widgets resizable
+           // save widget when resized
+          $j('#'+id).children('div.resize-frame-wrapper').resizable({                
+                  start: function(event, ui) {
+                          //console.log("Resize:");
+                          $j('body').css('backgroundImage', 'url(/images/grid_20x20.gif)');
+                  },
+                  stop: function(event, ui) {
+                          //alert(ui.size.width);
+                           $j('body').css('backgroundImage', 'none');
+
+                            postdata = 'sizex='+ui.size.width+'&sizey='+ui.size.height
+                            $j.ajax({
+                               type: "PUT",
+                               dataType: "json",
+                               url: widgetURL,
+                               data: postdata,
+                               success: function(data, textStatus){
+                                  notify('notice', data.id + '<br/>' + textStatus + 'update');
+                               },
+                               error: function(data, textStatus) {
+                                  notify('error', textStatus + data );
+                               }
+                             });
+
+
+                  },
+                  grid: [20,20],
+                  alsoResize: '#'+id+' div.handleDnD',
+                  disabled: true
+          });
+
+          $j('#'+id).draggable({
+                  drag: function(event, ui) {
+                          // console.log("Drag: "+ui.position.left+" y:"+ui.position.top);
+                          
+                          if (ui.position.left <= 0 || ui.position.top <= 0)
+                                  return false;
+                  },
+                  start: function(event, ui) {
+                        //alert(widgetURL);
+                          //console.log("DnD:");
+                          // console.log("Start: "+ui.position.left+" y:"+ui.position.top);
+                          $j('body').css('backgroundImage', 'url(/images/grid_20x20.gif)');
+                  },
+                  stop: function(event, ui) {
+                          //alert(ui.position.top);
+                          $j('body').css('backgroundImage', 'none');
+
+                            postdata = 'top='+ui.position.top+'&left='+ui.position.left
+                            $j.ajax({
+                               type: "PUT",
+                               dataType: "json",
+                               url: widgetURL,
+                               data: postdata,
+                               // data is a json object
+                               success: function(data, textStatus){
+                                 //$j('#widget-'+widgetID).effect('highlight',{},500);
+                                 notify('notice', data.id + '<br/>' + textStatus + 'update');
+                               },
+                               error: function(data, textStatus) {
+                                  notify('error', textStatus + data  );
+                               }
+                             });
+
+
+                      },
+                      grid: [20,20],
+                      handle: '#'+id+' div.handleDnD',
+                      disabled: true,
+                      iframeFix: true
+              });
+
+          //console.log($('#'+id).children('div.resize-frame-wrapper'));
+          //$j('#edit_widget_'+widgetID).ajaxForm();
+          $j('#'+id).children('div.resize-frame-wrapper').click(function(eventObject){
+                          var zIndex = parseInt($j('#'+id).css('z-index'));
+                          if (zIndex < zIndexMax) {
+                              //console.log('iterate');
+                              zIndexMax = zIndexMax + 3;
+                              //TODO nicht bei jedem Klick iterieren
+                              $j('#'+id).css('z-index', zIndexMax);
+                              $j('#'+id).children('div.handleDnD').css('z-index', (zIndexMax+1));
+                              $j('#'+id).children('div.resize-frame-wrapper').css('z-index', (zIndexMax+2));
+                          }
+                          //console.log('max: ' + zIndexMax + ' index_old' + zIndex + 'index_new: ' + $('#'+id).css('z-index'));
+                  }
+          );
+
+          $j('.ui-resizable-handle').hide();
+          setEditMode(id);
+      });
+
+      function setEditMode (edit_id) {
+                var id = '#' + edit_id;
+		var zIndex = parseInt($j(id).css('z-index'));
+                $j('.ui-resizable-handle').show();
+		$j(id).children('div.handleDnD')
+			.css('z-index', (zIndex+2))
+			.css('cursor', 'move');
+		$j(id).children('div.resize-frame-wrapper').css('z-index', (zIndex+1));
+
+		$j(id).draggable("option", {
+			disabled: false,
+			iframeFix: true
+		}).addClass('ui-draggable-disabled ui-state-disabled');
+		$j(id).children('div.resize-frame-wrapper')
+			.resizable("option", {
+				disabled: false
+			})
+			.removeClass('ui-resizable-disabled ui-state-disabled')
+			.css('');//.attr('unselectable', 'off');
+
+		$j(id).children('div.handleDnD').click(function(){
+			zIndexMax = zIndexMax + 3;
+                        $j(id).css('z-index', zIndexMax);
+			$j(id).children('div.handleDnD').css('z-index', (zIndexMax+2));
+			$j(id).children('div.resize-frame-wrapper').css('z-index', (zIndexMax+1));
+		});
+		//$j(id).children('div.resize-frame-wrapper').click(function(){});
+      }
+    });
+  </script>
+
+<%= javascript_tag "var AUTH_TOKEN = #{form_authenticity_token.inspect};" if protect_against_forgery? %>
+
+<%= link_to 'Show', :controller => "dashboards", :action => "show", :id => @dashboard.id %>
+
+<% form_for @dashboard do |f| %>
+    <%= f.error_messages %>
+    
+    <%= link_to_add_fields "Add widget", f, :widgets %>
+    <%#= f.text_field :name, :size=>30  %>
+
+<% end %>
+
+
+
+<% zIndex = 99 %>
+<% @dashboard_widgets.each do |w| %>
+
+  <% randBgColor = "%06x" % (rand * 0xffffff) %>
+  <% randBgColor = "#" + randBgColor %>
+  <% zIndex = zIndex + 3 %>
+
+
+  <div class="widget dnd-frame-wrapper" style="position:absolute; top:<%= w.top %>px; left:<%= w.left %>px; z-index: <%= zIndex %>; " id="widget-<%= w.id %>">
+  <div class="handleDnD" style="position:absolute; top:0; left:0; width:<%= w.sizex %>px; height:<%= w.sizey %>px;  z-index: <%= zIndex +1 %>; "></div>
+  <div class="resize-frame-wrapper" style="background-color: <%= randBgColor %>; position: relative; top:0px; left:0px; width:<%= w.sizex - 10 %>px; height:<%= w.sizey - 10 %>px; padding: 10px; margin: 0px; border: 1px dashed #333; background: #fff;  z-index: <%= zIndex + 2 %>; ">
+    <h2>Id:<%= w.id %> z-index:<%= zIndex %></h2>
+  </div>
+
+  <%= link_to "Delete", widget_path(w), :confirm => 'Are you sure?', :method => :delete,
+              :update => { :success => "dashboard", :failure => "error" } %>
+  </div>
+
+<% end %>
+
+  <div id="zIndexMax" style="display:none;">
+    <%= zIndex %>
+  </div>
+
+<%# dashboard div end %>
+</div>
+

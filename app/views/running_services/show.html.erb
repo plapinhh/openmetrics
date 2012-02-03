@@ -1,0 +1,18 @@
+<p>
+  <b>System:</b>
+  <%=h @running_service.system_id %>
+</p>
+
+<p>
+  <b>Service:</b>
+  <%=h @running_service.service_id %>
+</p>
+
+<p>
+  <b>Comment:</b>
+  <%=h @running_service.comment %>
+</p>
+
+
+<%= link_to 'Edit', edit_running_service_path(@running_service) %> |
+<%= link_to 'Back', running_services_path %>

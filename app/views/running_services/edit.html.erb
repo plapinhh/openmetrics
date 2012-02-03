@@ -1,0 +1,41 @@
+<h1>Edit running_service</h1>
+
+<%= error_messages_for :running_service %>
+
+<% form_for(@running_service) do |f| %>
+
+  <table>
+    <tr>
+      <td rowspan=3><img src="/images/run32.png"></td>
+      <td class="<%=cycle("odd","even")%>">System:</td><td class="odd">
+        <% @system_id = "" %>
+        <% if params[:system_id] != nil %>
+          <% @system_id = params[:system_id] %>
+          <%= f.hidden_field :system_id, :value=> @system_id %>
+          <%= h System.find(@system_id).name %>
+        <% else %>
+          <%= f.select :system_id, System.find(:all, :order => "name ASC").collect {|s| [s.name, s.id]} %>
+        <% end %>
+      </td>
+    </tr>
+    <tr class="<%=cycle("odd","even")%>"><td>Service:</td><td>
+      <%= f.select :service_id, Service.find(:all, :order => "name ASC").collect {|s| [(s.name + " - " + s.id.to_s + " : " + s.dns_name), s.id]} %>
+    </td></tr>
+    <tr class="<%=cycle("odd","even")%>"><td>Comment:</td><td>
+      <%= f.text_area :comment , :rows => 2, :size => 50%>
+    </td></tr>
+  </table>
+
+
+
+  <p>
+    <%= f.submit "Update" %>
+ 
+<% end %>
+<% if params[:system_id] != nil %>
+  <%= link_to 'Back', system_path(params[:system_id]), :class => :navigation %>
+<% else %>
+  <%= link_to 'Back', running_services_path, :class => :navigation %>
+<% end %>
+ </p>
+

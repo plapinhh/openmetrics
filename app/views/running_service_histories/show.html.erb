@@ -1,0 +1,28 @@
+<p>
+  <b>System:</b>
+  <%=h @running_service_history.system_id %>
+</p>
+
+<p>
+  <b>Service:</b>
+  <%=h @running_service_history.service_id %>
+</p>
+
+<p>
+  <b>Running service:</b>
+  <%=h @running_service_history.running_service_id %>
+</p>
+
+<p>
+  <b>Running from:</b>
+  <%=h @running_service_history.running_from %>
+</p>
+
+<p>
+  <b>Running to:</b>
+  <%=h @running_service_history.running_to %>
+</p>
+
+
+<%= link_to 'Edit', edit_running_service_history_path(@running_service_history) %> |
+<%= link_to 'Back', running_service_histories_path %>

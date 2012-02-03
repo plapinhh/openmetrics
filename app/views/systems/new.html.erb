@@ -1,0 +1,132 @@
+<script type="text/javascript">
+
+  $j(document).ready(function($) {
+
+    $j('#startscan').click(function(){        
+      paramsString = $j('#scanform').serialize();
+      //alert(paramsString);
+      $j.ajax({
+        url: '/systemscan?' +paramsString,
+        complete: function(data, stat){
+          if(stat=="success") {
+            // needed to request scanresult  
+            job_key = data.responseText;
+            checkForScanresult(job_key);
+            $j.gritter.add({image: '/images/gritter/progress.gif',title: 'Scan successfully scheduled!',text: 'You will receive a notification on job completion.'});
+            $j('#new_system_dialog').dialog("close");
+          } else {
+            $j.gritter.add({image: '/images/gritter/error.png',title: 'Scan could not be scheduled!',text: 'You may want to check the OpenMetrics status page for errors!'});
+            $j('#new_system_dialog').dialog("close");
+          }
+        }
+      });
+    });
+
+    // Dialog
+    $('#newsystem_link').click(function(){
+      $('#new_system_dialog').dialog('open');
+      return false;
+    });
+    
+    $j('#new_system_dialog').dialog({
+      autoOpen: false,
+      width: 700,
+      title: 'Add System',
+      buttons: {
+        "Ok": function() {
+          $(this).dialog("close");
+        },
+        "Cancel": function() {
+          $(this).dialog("close");
+        }
+      }
+    });
+
+    //    // Accordion
+    //    $("#accordion").accordion({ header: "h3" });
+
+    // Tabs
+    $j('#tabs').tabs();  
+  }); // end document rdy 
+
+
+  function checkForScanresult(job_key) {
+    t = setTimeout ( 
+    function () {
+      $j.ajax({
+        url: '/scanresult?job_key='+job_key,
+        complete: function(data, stat){
+          if(stat=="success") {
+            console.log(JSON.parse(data.responseText));
+            //alert(job_key);
+            //clearTimeout(t);
+            //checkForScanresult(job_key);
+          }
+        }
+      });
+    }, 150000 ); //FIXME loop until scan finished
+  }
+
+
+
+</script>
+
+<style type="text/css">
+  /*theme preview css*/
+  #startscan, #newsystem_link {padding: .4em 1em .4em 20px;text-decoration: none;position: relative;}
+  #startscan span.ui-icon, #newsystem_link span.ui-icon {margin: 0 5px 0 0;position: absolute;left: .2em;top: 50%;margin-top: -8px;}
+  ul#icons {margin: 0; padding: 0;}
+  ul#icons li {margin: 2px; position: relative; padding: 4px 0; cursor: pointer; float: left;  list-style: none;}
+  ul#icons span.ui-icon {float: left; margin: 0 4px;}
+</style>
+
+
+<div id="new_system_dialog">
+  <div id="tabs">
+
+    <ul>
+      <li><a href="#tabs-1">Discovery</a></li>
+      <li><a href="#tabs-2">Manually</a></li>
+      <li><a href="#tabs-3">Recent Scanresults</a></li>
+    </ul>
+
+    <div id="tabs-1">
+      <p class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: .7em .7em;">
+        <span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>
+        You can enter a fully qualified domain name or IP address here, e.g. 74.125.43.99 or myhost.example.com
+      </p>
+      <br/>
+      <form id="scanform" action="#">
+        <input type="text" name="target" >
+      </form>
+      <br/>
+      <a href="#" id="startscan" class="ui-state-default ui-corner-all"><span class="ui-icon ui-icon-newwin"></span>Scan</a>
+    </div>
+    <div id="tabs-2">
+      <h1>Add System</h1>
+      <b>Name: </b>                       <div style="float: right; margin-right: 0px;"><%= h(@system.name)  %></div><br /><br />
+      <b>IP: </b>                         <div style="float: right; margin-right: 0px;"><%= h(@system.ip)  %></div><br /><br />
+      <b>FQDN: </b>                       <div style="float: right; margin-right: 0px;"><%= h(@system.fqdn)  %></div><br /><br />
+      <b>Operating system: </b>           <div style="float: right; margin-right: 0px;"><%= h(@system.operating_system)  %></div><br /><br />
+      <b>Operating system flavour: </b>   <div style="float: right; margin-right: 0px;"><%= h(@system.operating_system_flavour)  %></div><br /><br />
+      <b>Environment: </b>                <div style="float: right; margin-right: 0px;"><%= h(@system.environment)  %></div><br /><br />
+      <b>Description: </b>    systems_controller.rb            <div style="float: right; margin-right: 0px;"><%= h(@system.description)  %></div><br /><br />
+      <b>SSH user: </b>                   <div style="float: right; margin-right: 0px;"><%= h(@system.sshuser)  %></div><br /><br />
+      <b>Munin Group: </b>                <div style="float: right; margin-right: 0px;"><%= h(@system.munin_group)  %></div><br /><br />
+    </div>
+    <div id="tabs-3">
+      none
+    </div>
+  </div>
+</div>
+
+<a href="#" id="newsystem_link" class="ui-state-default ui-corner-all"><span class="ui-icon ui-icon-newwin"></span>New System</a>
+
+<%#*gritter experiments%> 
+<%= js add_gritter("Hello world!", :image => :notice) %>
+<%= js add_gritter("Hello world!", :title => 'YEAH', :image => :success) %>
+<%= js add_gritter("Hello world!", :image => :warning) %>
+<%= js add_gritter('I am sticky and will disapear only if you close me manually.', :title => 'Dohhhh!', :sticky => true, :image => :error) %>
+<%= js add_gritter("Hello world!", :image => :progress) %>
+<br/><br/>
+<%= link_to_function "Notify", add_gritter("This is a notification just for you!") %>

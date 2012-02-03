@@ -1,0 +1,36 @@
+<h1>New running_service_history</h1>
+
+<%= error_messages_for :running_service_history %>
+
+<% form_for(@running_service_history) do |f| %>
+  <p>
+    <b>System</b><br />
+    <%= f.text_field :system_id %>
+  </p>
+
+  <p>
+    <b>Service</b><br />
+    <%= f.text_field :service_id %>
+  </p>
+
+  <p>
+    <b>Running service</b><br />
+    <%= f.text_field :running_service_id %>
+  </p>
+
+  <p>
+    <b>Running from</b><br />
+    <%= f.datetime_select :running_from %>
+  </p>
+
+  <p>
+    <b>Running to</b><br />
+    <%= f.datetime_select :running_to %>
+  </p>
+
+  <p>
+    <%= f.submit "Create" %>
+  </p>
+<% end %>
+
+<%= link_to 'Back', running_service_histories_path %>

@@ -1,0 +1,47 @@
+<h1>Editing service_history</h1>
+
+<%= error_messages_for :service_history %>
+
+<% form_for(@service_history) do |f| %>
+  <p>
+    <b>Name</b><br />
+    <%= f.text_field :name %>
+  </p>
+
+  <p>
+    <b>Typ</b><br />
+    <%= f.text_field :typ %>
+  </p>
+
+  <p>
+    <b>Group</b><br />
+    <%= f.text_field :group %>
+  </p>
+
+  <p>
+    <b>Description</b><br />
+    <%= f.text_field :description %>
+  </p>
+
+  <p>
+    <b>Service</b><br />
+    <%= f.text_field :service_id %>
+  </p>
+
+  <p>
+    <b>Running from</b><br />
+    <%= f.datetime_select :running_from %>
+  </p>
+
+  <p>
+    <b>Running to</b><br />
+    <%= f.datetime_select :running_to %>
+  </p>
+
+  <p>
+    <%= f.submit "Update" %>
+  </p>
+<% end %>
+
+<%= link_to 'Show', @service_history %> |
+<%= link_to 'Back', service_histories_path %>

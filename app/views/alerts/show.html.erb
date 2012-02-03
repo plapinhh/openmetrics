@@ -1,0 +1,43 @@
+<p>
+  <b>System:</b>
+  <%=h @alert.system_id %>
+</p>
+
+<p>
+  <b>Severity:</b>
+  <%=h @alert.severity %>
+</p>
+
+<p>
+  <b>Metric identifier:</b>
+  <%=h @alert.metric_identifier %>
+</p>
+
+<p>
+  <b>Value:</b>
+  <%=h @alert.value %>
+</p>
+
+<p>
+  <b>Warning min:</b>
+  <%=h @alert.warning_min %>
+</p>
+
+<p>
+  <b>Warning max:</b>
+  <%=h @alert.warning_max %>
+</p>
+
+<p>
+  <b>Failure min:</b>
+  <%=h @alert.failure_min %>
+</p>
+
+<p>
+  <b>Failure max:</b>
+  <%=h @alert.failure_max %>
+</p>
+
+
+<%= link_to 'Edit', edit_alert_path(@alert) %> |
+<%= link_to 'Back', alerts_path %>

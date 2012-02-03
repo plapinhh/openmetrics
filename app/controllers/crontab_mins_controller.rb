@@ -1,0 +1,2 @@
+class CrontabMinsController < ApplicationController
+end

@@ -1,0 +1,24 @@
+<div id="edit_dashboard_form" class="ui-helper-clearfix">
+<% form_for @dashboard do |f| %>
+    <%= f.error_messages %>
+
+    <b>
+      <%= f.label :name %>
+    :</b>
+    
+    <%= f.text_field :name, {"size" => 20, "style" => "float:right; margin-right: 10px;"} %>
+
+
+
+   <%#*currently not used%>
+   <%#*one could save widget attributes within workspace dashboard%>
+   <%#*http://railscasts.com/episodes/196-nested-model-form-part-1%>
+    <%#*this could be used with complex nested forms    %>
+    <%# get fields necessary for a widget%>
+    <%# f.fields_for :widgets do |builder| %>
+      <%#= render "widget_fields", :f => builder %>
+    <%# end %>
+
+    <%#= f.submit "Save" %>
+  <% end %>
+</div>

@@ -1,0 +1,36 @@
+<h1>Listing inventory_items</h1>
+
+<table>
+  <tr>
+    <th>System</th>
+    <th>Owner</th>
+    <th>Contract start date</th>
+    <th>Minimum contract running date</th>
+    <th>Initial cost</th>
+    <th>Monthly cost</th>
+    <th>Inv id parship</th>
+    <th>Inv id provider</th>
+    <th>Description</th>
+  </tr>
+
+<% for inventory_item in @inventory_items %>
+  <tr>
+    <td><%=h inventory_item.system_id %></td>
+    <td><%=h inventory_item.owner %></td>
+    <td><%=h inventory_item.contract_start_date %></td>
+    <td><%=h inventory_item.minimum_contract_running_date %></td>
+    <td><%=h inventory_item.initial_cost %></td>
+    <td><%=h inventory_item.monthly_cost %></td>
+    <td><%=h inventory_item.inv_id_parship %></td>
+    <td><%=h inventory_item.inv_id_provider %></td>
+    <td><%=h inventory_item.description %></td>
+    <td><%= link_to 'Show', inventory_item %></td>
+    <td><%= link_to 'Edit', edit_inventory_item_path(inventory_item) %></td>
+    <td><%= link_to 'Destroy', inventory_item, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New inventory_item', new_inventory_item_path %>

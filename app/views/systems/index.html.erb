@@ -1,0 +1,45 @@
+<%# http://michael.github.com/multiselect/; %>
+<%= stylesheet_link_tag 'ui.multiselect' %>
+<%= javascript_include_tag "ui.multiselect" %>
+
+<%# http://www.trirand.com/blog/ %>
+<%= stylesheet_link_tag 'ui.jqgrid' %>
+<%= javascript_include_tag "grid.locale-de" %>
+<%= javascript_include_tag "jquery.jqGrid.min" %>
+
+<%= javascript_include_tag "systems.index" %>
+
+<%= javascript_tag "var AUTH_TOKEN = #{form_authenticity_token.inspect};" if protect_against_forgery? %>
+
+<h1>Manage systems</h1>
+
+<p>This page allows you to create, retrieve, update and delete systems. Some actions can only performed when a system is selected!</p>
+
+<ul>
+  <li>
+    <span style="vertical-align: middle" class="ui-icon ui-icon-plusthick inline-ui-icon"></span>
+    <a href="#" id="addSystemButton">New system</a>
+  </li>
+  <li>
+    <span style="vertical-align: middle" class="ui-icon ui-icon-copy inline-ui-icon"></span>
+    <a href="#" id="cloneSystemButton">Clone system</a>
+  </li>
+  <li>
+    <span style="vertical-align: middle" class="ui-icon ui-icon-trash inline-ui-icon"></span>
+    <a href="#" id="delSystemButton">Delete system</a>
+  </li>
+  <br/>
+  <li>
+    <span style="vertical-align: middle" class="ui-icon ui-icon-circle-arrow-e inline-ui-icon"></span>
+    <a href="/system_groups" id="SystemGroupsButton">Manage system groups</a>
+  </li>
+</ul>
+
+
+<h2>Active systems (<%= @systems.size %>)</h2>
+
+<table id="systems_table"></table>
+
+<%#*TODO it should be possible to disable systems, but keep all the history and interesting stuff.%>
+<%#*maybe one should ask to delete associated datafiles like collectd's .rrd files%>
+<%#*<h2>Disabled systems</h2>%>

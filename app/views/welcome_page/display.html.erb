@@ -1,0 +1,56 @@
+<%#*currently used in welcomepage_controller%>
+
+<script type="text/javascript">
+  $j(document).ready(function($) {
+    // move searchbar out of header
+    $j('#searchbox').children().appendTo('#container_for_search_input');
+
+    // place search box
+    $j("#box").position({ my: "center", at: "center", of: window });
+     <%#*ignore the height of top toolbar; this will make sure%> 
+     <%#*there is no "box jumping" after a users login on session/new page%>
+    $j("#box").offset({ top: 100 });
+
+    //
+    $j("#search").focus();
+  });
+</script>
+
+<style type="text/css">
+    #box {
+        width:600px;
+        /*border: 2px solid #F39814;*/
+        border: medium double #ddd;
+        padding: 28px
+    }
+    #info {
+        margin-top: 42px;
+        font-size: small;
+        color: gray;
+        padding: 0.7em;
+        background-color: #f3f3f3;    
+        border: 1px solid #ddd;
+    }
+
+</style>
+
+<div id="box"
+  <span id="openmetrics-banner" style="font-family: 'andale mono'; font-size: 42px;">Find...</span>
+  <br /><br />
+  <div id="container_for_search_input" style="float:none;"></div>
+
+   <div id="info">
+      <img src="/images/noun_icons/darkgrey/16x16/info.png" alt="INFO" style="vertical-align: middle" />
+      <small  style="vertical-align: middle">Just start typing! Let me lead your way... </small>
+    </small>
+  </div>
+</div>
+
+
+<%#*<h1>Welcome%>
+  <%# if @current_user.name.empty? %>
+    <%#=  link_to_user @current_user, :content_method => :email %>
+  <%# else %>
+    <%#=  link_to_user @current_user, :content_method => :name %>
+  <%#  end %>
+<%#*</h1>%>

@@ -1,0 +1,182 @@
+<%#*The view is the second step of LiveTickerBarWidget edit form.%>
+<%#*The 'netx button' in the form_step1.html starts a ajax request to collectd_image_widgets_controller to load this view after systems have been chosen.%>
+<script type="text/javascript">
+  function openLiveTickerBarWidgetMetricSelection (widget) {
+    var buttons = new Object();
+    if (widget.id != "new") {
+      buttons['Save'] = function(){
+        if (widget.preferences.metrics && widget.preferences.metrics.length == 0) {
+          notify('info', "No metrics have been selected to process!");
+          return;
+        }
+        var formValuesObject = getFormValuesObject(widget);
+        var postdata = {preferences: JSON.stringify(formValuesObject)};
+        postdata['top'] = widget.top;
+        postdata['left'] = widget.left;
+        postdata['sizex'] = widget.sizex;
+        postdata['sizey'] = widget.sizey;
+        saveWidget(widget.id, 'live_ticker_bar_widgets', postdata, widget.dialogContainer)
+        widget.dialogContainer.dialog('disable');
+      };
+    } else {
+      buttons['Create'] = function() {
+        if (widget.preferences.metrics && widget.preferences.metrics.length == 0) {
+          notify('info', "No metrics have been selected to process!");
+          return;
+        }
+        widget.dialogContainer.dialog('disable');
+        var formValuesObject = getFormValuesObject(widget);
+        var top = 80;
+        var left = 40;
+        var size = calculateBarSize(widget);
+        var sizex = size.x;
+        var sizey = size.y;
+        createWidget(widget.dialogContainer, "live_ticker_bar_widgets", formValuesObject, top, left, sizex, sizey);
+      };
+    }
+    buttons['Back'] = function() {
+      widget.dialogContainerElements.collectd_widget_form_tabs.tabs("select" , 2 );
+    };
+    widget.dialogContainer.dialog({
+      buttons: buttons
+    });
+  }
+
+  function getFormValuesObject(widget) {
+    var formValuesObject = new Object();
+    formValuesObject['system_id'] = widget.preferences.system_id;
+    formValuesObject['metrics'] = widget.preferences.metrics;
+    formValuesObject['refresh_interval'] = widget.dialogContainer.find('select.refresh_interval').val();
+    return formValuesObject;
+  }
+
+  function calculateBarSize(widget) {
+    var size = new Object();
+    var width = $j(window).width() - 40;
+    var metrics = widget.preferences.metrics.length;
+
+    var metrics_in_first_row = Math.floor(width/240);
+    metrics_in_first_row = Math.min((metrics+1), metrics_in_first_row);
+    size.x = metrics_in_first_row*240;
+    var rows = Math.ceil(metrics/metrics_in_first_row);
+    size.y = rows*130;
+    return size;
+  }
+
+  function initLiveTickerBarWidgetMetricSelection (widget) {
+    widget.dialogContainer.find(".metrics_advanced_container")
+    .addClass("ui-widget ui-widget-content ui-helper-clearfix ui-corner-all")
+    .find(".portlet-header")
+    .addClass("ui-widget-header ui-corner-all")
+    .end()
+    .find(".portlet-content");
+
+    var checktree = widget.dialogContainer.find("ul.tree").checkTree();
+
+    widget.dialogContainer.find("ul.tree").bind('click', function() {
+      if (widget.dialogContainer.find("ul.tree").find("div.checkbox.checked ~ input.metrics").size() > 0) {
+        widget.dialogContainer.find("select.metric_presets").val("");
+        widget.preferences.metric_preset = $j("select.metric_presets").val();
+        widget.preferences.metrics = getMetricsArray(widget);
+      } else
+        widget.preferences.metrics = false;
+    });
+
+    if (widget.preferences.metrics && widget.preferences.metrics.length > 0) {
+<%#*widget.dialogContainer.find(".metrics_advanced_container div.portlet-header").click();%>
+      var metrics = widget.preferences.metrics;
+      $j.each(metrics, function (index, item) {
+        widget.dialogContainer.find("#"+item.metric).attr("checked", "checked");
+        widget.dialogContainer.find("#"+item.metric).attr("metric_settings", JSON.stringify(item.metric_settings));
+      });
+      checktree.update();
+    }
+    
+    if (widget.preferences.metric_value_kind) {
+      widget.dialogContainer.find('input[name="metric_value_kind"]').val([widget.preferences.metric_value_kind]);
+    }
+
+    if (widget.preferences.refresh_interval) {
+      widget.dialogContainer.find('select.refresh_interval').val(widget.preferences.refresh_interval);
+    }
+
+    widget.dialogContainer.dialog('enable');
+  }
+
+  function getMetricsArray (widget) {
+    var result = new Array();
+    widget.dialogContainer.find("ul.tree").find("div.checkbox.checked ~ input.metrics").each(function(){
+      var metric = new Object();
+      metric.metric = $j(this).attr("id");
+      metric.metric_options = JSON.parse($j(this).attr("metric_options"));
+      metric.metric_settings = JSON.parse($j(this).attr("metric_settings"));
+      result.push(metric);
+    });
+    return result;
+  }
+</script>
+<style type="text/css">
+  /*.portlet { margin: 0 1em 1em 0; }*/
+  /*.portlet-header { margin: 0.3em; padding-bottom: 4px; padding-left: 0.2em; }*/
+  /*.portlet-header .ui-icon { float: right; }*/
+  .portlet-header .ui-icon { float: left; }
+  .portlet-content { padding: 0.4em; }
+</style>
+<div class="metric_selection_container">
+
+  <div class="metrics_advanced_container portlet" style="margin-right: 0px; margin-top: 0px;">
+    <div class="portlet-header"><b>Metrics advanced</b></div>
+    <div class="portlet-content">
+      <ul class="tree" style="height:250px; overflow:auto;">
+<%# metrics_grouped_by_metric_group = @metrics.group_by{|m| m.options[:metric_group]} %>
+        <% metrics_grouped_by_metric_group = @metrics.group_by{|m| m['metric_options']['metric_group']} %>
+        <% metrics_grouped_by_metric_group.each do |metric_group, metrics| %>
+
+          <li>
+            <input type="checkbox"></input>
+            <label><%= metric_group %></label>
+            <ul>
+  <%# metrics_grouped_by_metric_rrd = metrics.group_by{|m| m.options[:metric_rrd]} %>
+              <% metrics_grouped_by_metric_rrd = metrics.group_by{|m| m['metric_options']['metric_rrd']} %>
+              <% metrics_grouped_by_metric_rrd.each do |metric_rrd, metrics| %>
+                <li>
+                  <input type="checkbox"></input>
+                  <label><%= metric_rrd %></label>
+                  <ul>
+                    <% metrics.each do |metric|%>
+                      <li>
+      <%#= metric.name %>
+                        <input type="checkbox" id="<%= metric['metric'] %>"
+                               class="metrics"
+      <%#=h metric.options.to_json() if metric.options %>
+                               metric_options="<%=h metric['metric_options'].to_json() if metric['metric_options'] %>"
+                               metric_settings="{}"
+                               ></input>
+      <%#= metric.name %>
+                        <label><%= metric['metric'] %></label>
+                      </li>
+                    <% end %>
+                  </ul>
+                </li>
+              <% end %>
+            </ul>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  </div>
+
+  <p id="refresh_interval_selection_container" class="ui-helper-clearfix">
+    <b  style="float:left">Refresh interval:</b>
+    <select  style="float:right" class="refresh_interval">
+      <option value="0">No refresh</option>
+      <option value="1">1s</option>
+      <option value="2">2s</option>
+      <option value="5">5s</option>
+      <option value="10" selected="selected">10s</option>
+      <option value="30">30s</option>
+      <option value="60">60s</option>
+    </select>
+  </p>
+
+</div>

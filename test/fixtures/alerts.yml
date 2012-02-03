@@ -1,0 +1,19 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  system_id: 1
+  metric_identifier: MyString
+  value: 1.5
+  warning_min: 1.5
+  warning_max: 1.5
+  failure_min: 1.5
+  failure_max: 1.5
+
+two:
+  system_id: 1
+  metric_identifier: MyString
+  value: 1.5
+  warning_min: 1.5
+  warning_max: 1.5
+  failure_min: 1.5
+  failure_max: 1.5

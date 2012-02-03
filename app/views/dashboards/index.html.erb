@@ -1,0 +1,27 @@
+<h1>Manage dashboards</h1>
+
+<p>This page allows you to manage all dashboards created by you, as well as view dashboards shared with you by others.</p>
+
+<ul>
+  <li>
+    <span style="vertical-align: middle" class="ui-icon ui-icon-plusthick inline-ui-icon"></span>
+    <%= link_to_remote "New dashboard", :url => { :action => "new"}, :method => 'get' %>
+  </li>
+</ul>
+
+
+<h2>Your dashboards</h2>
+<table>
+  <%#*<th>Name</th>%>
+  <% for dashboard in @dashboards %>
+  <tr>
+    <td width="600"><span style="vertical-align: middle" class="ui-icon ui-icon-circle-arrow-e inline-ui-icon"></span><span style="border-bottom: 1px dotted #333"><%= link_to " #{dashboard.name}", dashboard %></span></td>
+      <td><%= link_to "Show", dashboard.friendly_id %></td>
+      <%#*edit is currently used for renaming only%>
+      <td><%= link_to_remote "Rename", :url => { :action => "edit", :id => dashboard.id}, :method => 'get' %></td>
+      <%#= link_to "Edit", edit_dashboard_path(dashboard) %>
+      <td><%= link_to "Destroy", dashboard, :confirm => 'Are you sure?', :method => :delete %></td>
+    </tr>
+  <% end %>
+</table>
+

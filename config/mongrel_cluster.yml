@@ -1,0 +1,11 @@
+--- 
+user: om
+group: om
+environment: production
+servers: 10
+num_procs: "10"
+address: 127.0.0.1
+port: "8101"
+log_file: /opt/openmetrics/mongrel_cluster/logs/mongrel.log
+pid_file: /opt/openmetrics/run/mongrel.pid
+cwd: /opt/openmetrics/mongrel_cluster/webapps/openmetrics
