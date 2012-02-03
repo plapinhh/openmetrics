@@ -1,2 +1,0 @@
-page.insert_html :bottom, "workspace", "foo :) "
-page.visual_effect(:highlight, "workspace", :duration => 0.5)

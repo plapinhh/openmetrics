@@ -1,8 +1,0 @@
-#page.alert "Hello from widget #{@widget.id}";
-#
-# insert form into widget and open edit dialog with that content
-
-page.visual_effect(:highlight, "widget-#{@widget.id}", :duration => 0.5);
-page.insert_html :bottom, "widget-#{@widget.id}", :partial => "form";
-page.call "open_edit_dialog", "widget-#{@widget.id}", "Edit Widget #{@widget.id}";
-page.call "notify", "notice", "opened Edit Dialog for Widget #{@widget.id}";
