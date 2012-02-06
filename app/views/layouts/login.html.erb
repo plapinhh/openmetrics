@@ -12,15 +12,26 @@
   <%= yield :scripts %>
   <%= javascript_include_tag "prototype" %>
   <%= javascript_include_tag "jquery" %>
-  <%= javascript_include_tag "jquery.ui" %>
+  <%#= javascript_include_tag "jquery-1.7.1.min.js" %>
+  <%#= javascript_include_tag "jquery.ui" %>
+  <%= javascript_include_tag "jquery-ui-1.8.9.custom.min" %>
   <%= javascript_include_tag "jrails" %>
   <%= javascript_include_tag "jquery.themes" %>
   <%= javascript_include_tag "jquery.jnotify" %>
+  <%#*this is 0.3 of gritter, see https://github.com/RobinBrouwer/gritter/tree/v0.3%>
+  <%= include_gritter %>
   <%= javascript_include_tag "application" %>
 </head>
 
   <%#*you may want to have a look at app/views/sessions/new.html.erb%>
   <body>
     <%= yield  %>
+    
+    <%#* eden space for newly created DOM objects %>
+    <div id="eden"></div>
+
+    <%#* notifications %>
+    <%#=  js add_gritter("This is a notification just for you!") %>
+    <%= render :partial => 'layouts/notification' %>    
   </body>
 </html>

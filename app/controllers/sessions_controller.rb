@@ -3,8 +3,7 @@ class SessionsController < ApplicationController
   # Be sure to include AuthenticationSystem in Application Controller instead
   include AuthenticatedSystem
   skip_before_filter :login_required
-  layout "application", :only => :destroy
-  layout "login", :only => :new
+  layout "login", :only => [:new, :destroy]
   filter_parameter_logging "password"
 
   # render user-login form app/views/sessions/new.html.erb
@@ -38,7 +37,7 @@ class SessionsController < ApplicationController
       else
         redirect_back_or_default('/')
       end
-      flash[:notice] = "Logged in successfully"
+      gflash :success => "You have been logged on."
     else
       note_failed_signin
       @login       = params[:login]
@@ -50,14 +49,14 @@ class SessionsController < ApplicationController
 
   def destroy
     logout_killing_session!
-    flash[:notice] = "You have been logged out."
+    gflash :success => "You have been logged out."
     redirect_back_or_default('/')
   end
 
 protected
   # Track failed login attempts
   def note_failed_signin
-    flash[:error] = "Could not log you in as »#{params[:login]}«"
-    logger.warn "Failed login for '#{params[:login]}' from #{request.remote_ip} at #{Time.now.utc}"
+    gflash :error => "Could not log you in as »#{params[:login]}«"
+    logger.warn "Failed login for '#{params[:login]}' from #{request.remote_ip} at #{Time.now}"
   end
 end
