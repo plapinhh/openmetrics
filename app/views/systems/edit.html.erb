@@ -34,7 +34,7 @@
       $j(this).unbind(event);
     });
 
-    $j("#saveSystemButton").click(function() {
+    $j(".saveSystemButton").click(function() {
       paramsString = $j("form.niceforms").serialize();
 
       //iterate over each running service list and fetch attached collectd_plugins
@@ -90,7 +90,7 @@
             }
         },
         error: function(data, textStatus) {
-            notify('error', textStatus + data  );
+            notify('error', undefined, textStatus + data  );
         }
       });
       $j(this).blur();
@@ -102,27 +102,30 @@
 });
 
 function setAlertForSaveButton() {
-    notify('info', "The changes for system haven't been yet saved!" );
-    $j('#saveSystemButton span.ui-icon-alert').remove();
-    $j('<span class="ui-icon ui-icon-alert" style="float:right;"></span>').appendTo($j('#saveSystemButton span'));
-    $j('#saveSystemButton span.ui-icon ').css({'margin-top': '-3px', 'height': '16px'});
+    notify('notice', undefined, "The changes for system haven't been saved yet!" );
+    $j('.saveSystemButton span.ui-icon-alert').remove();
+    $j('<span class="ui-icon ui-icon-alert" style="float:right;"></span>').appendTo($j('.saveSystemButton span'));
+    $j('.saveSystemButton span.ui-icon ').css({'margin-top': '-3px', 'height': '16px'});
     
 }
 </script>
+
+
 <h1>System "<%= @system.name %>" </h1>
+
 <div style="position:relative; margin-top: 0px; width: 1000px; margin-left: auto; margin-right: auto;" class="ui-helper-clearfix">
   <div class="ui-widget systems_combobox" style ="float:left;">
     <%= render :partial => "layouts/combobox", :locals => { :items => System.find(:all) } %>
   </div>
 
   <div style ="float:left; margin:5px;"> | </div>
-  <%= link_to 'Delete', @system, :confirm => 'Are you sure?', :method => :delete, :style => "float:left;", :id => "deleteSystemButton", :class => "button" %>
+  <%= link_to 'Delete', @system, :confirm => 'Are you sure?', :method => :delete, :style => "float:left;", :class => "deleteSystemButton button" %>
 
   <div style ="float:left; margin:5px;"> | </div>
-  <%= link_to 'Back', @system, :style => "float:left;", :id => "backSystemButton", :class => "button" %>
+  <%= link_to 'Back', @system, :style => "float:left;", :class => "backSystemButton button" %>
 
   <div style ="float:left; margin:5px;"> | </div>
-  <%= link_to 'Save', "#", :style => "float:left;", :id => "saveSystemButton", :class => "button" %>
+  <%= link_to 'Save', "#", :style => "float:left;", :class => "saveSystemButton button" %>
 </div>
 
 <div style="position:relative; margin-top: 10px; width: 1000px; margin-left: auto; margin-right: auto;">

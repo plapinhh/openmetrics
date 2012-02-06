@@ -13,7 +13,7 @@ user-login form
     $j("#loginbox").position({ my: "center", at: "center", of: window });
     $j("#loginbox").offset({ top: 150 });
 
-    $j("#openmetrics-banner").position({ my: "left bottom", at: "left top", of: "#loginbox", offset: "0 -5" });
+    <%#*$j("#openmetrics-banner").position({ my: "left bottom", at: "left top", of: "#loginbox", offset: "0 -5" });%>
 
 
     $j("#login").focus();
@@ -39,10 +39,6 @@ user-login form
         border: none;
     }
 
-    #loginbox h1 img {
-       /* margin-right: 10px;*/
-    }
-
     #loginbox input[type='text'], #loginbox input[type='password'] {
         border-color: grey;
         border-color: -moz-use-text-color;
@@ -66,7 +62,6 @@ user-login form
 
     #disclaimer {
         margin-top: 42px;
-        font-size: small;
         color: gray;
         padding: 0.7em;
         background-color: #f3f3f3;    
@@ -75,15 +70,15 @@ user-login form
 </style>
 
 
-
-
-
-<span id="openmetrics-banner" style="font-family: 'andale mono'; font-size: 42px;">OpenMetrics</span>
-
-
 <div id="loginbox">
+
+<div id="openmetrics-banner">
+▄▀▄ █▀▄ █▀▀ █▄░█ █▄░▄█ █▀▀ ▀█▀ █▀▀▄ ▀ ▄▀ ▄▀▀<br>
+█░█ █░█ █▀▀ █░▀█ █░█░█ █▀▀ ░█░ █▐█▀ █ █░ ░▀▄<br>
+░▀░ █▀░ ▀▀▀ ▀░░▀ ▀░░░▀ ▀▀▀ ░▀░ ▀░▀▀ ▀ ░▀ ▀▀░<br>
+</div>
+
   <h1>
-    <%#*<img src="/images/icon_openlock_50.png" alt="open lock image" />%>
     <img src="/images/noun_icons/red3/32x32/lock.png" alt="[image of a lock]" style="vertical-align: middle" />
     <span style="vertical-align: middle">Welcome stranger! Please sign in.</span>
   </h1>
