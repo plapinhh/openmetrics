@@ -124,8 +124,8 @@ $j(document).ready(function($) {
 
     // force edit mode for all widgets in dashboard
     function forceDashboardEditMode (isChecked) {   
-        if (isChecked) {
-            notify('notice', 'Edit mode is activated! <br/> <small>Press "Edit" button or "Esc" key to deactivate edit mode.</small>' );
+        if (isChecked) {        
+            notify('notice', 'Edit mode is activated!', 'Press "Edit" button or "Esc" key to deactivate edit mode.' );
             $j("#content").selectable({disabled: false});
 
             $j('#editDashboardButtonWrapper label').addClass("ui-state-active");
@@ -138,7 +138,7 @@ $j(document).ready(function($) {
             $j('.ui-resizable-handle').show();
         }
         else {
-            notify('notice', 'Edit mode is deactivated!' );
+            notify('notice', 'Edit mode is deactivated!', 'Hit "edit" button or press the "e" key to activate edit mode again.' );
             $j("#content").selectable({disabled: true}).removeClass("ui-state-disabled");
             $j( "button#deleteWidgetsButton" ).hide();
             $j('#editDashboardButtonWrapper label').removeClass("ui-state-active");

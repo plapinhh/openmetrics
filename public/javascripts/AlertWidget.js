@@ -74,7 +74,7 @@ $j.extend(AlertWidget, {
                 }
             },
             error: function(data, textStatus) {
-                notify('error', textStatus + data  );
+                notify('error', 'Something went wrong', textStatus + data  );
                 dialog.dialog({
                     buttons: null
                 });
@@ -94,7 +94,7 @@ $j.extend(AlertWidget, {
             url: '/recentalerts?start_date=' + start_date,
             success: function(data, textStatus){
                 if(textStatus=="success") {
-                    notify('notice', 'fresh data for AlertWidget#'+widget.id+' received.');
+                    notify('notice', 'AlertWidget#'+widget.id, 'Fresh data received.');
                     // prepend alerts to widget content
                     $j.each(data, function(i, obj) {
                         //console.log(alert.alert.created_at);
@@ -122,7 +122,7 @@ $j.extend(AlertWidget, {
                 }
             },
             error: function(data, textStatus) {
-                notify('notice', '<strong>ERROR</strong> refreshing widget#'+widget.id+' failed. No new data received.');
+                notify('error', 'AlertWidget#'+widget.id, 'Refreshing failed. No new data received.');
             }
         });
     }

@@ -255,7 +255,7 @@ function renderWidget(id){
                     saveWidget(id, "widgets", postdata);
                 }
             });
-            if (warning) notify('notice', "One (or more) widget(s) couldn't be positioned outside the dashboard area!");
+            if (warning) notify('warning', undefined, "One (or more) widget(s) couldn't be positioned outside the dashboard area!");
         },
         handle: '#'+id+' div.handleDnD',
         disabled: true,
@@ -407,7 +407,7 @@ function saveWidget(id, path, postdata, dialog) {
             }
         },
         error: function(data, textStatus) {
-            notify('error', textStatus + data  );
+            notify('error','Widget#'+id, textStatus + data  );
         }
     });
 }
@@ -440,7 +440,7 @@ function deleteWidgets(ids) {
                     },
                     complete: function(data, textStatus){
                         if(textStatus=="success") {
-                            notify('notice', 'Successfully deleted widget(s).');
+                            notify('success', undefined, 'Successfully deleted widget(s).');
                             ids.each(function (id) {
                                 var widget = Widgets[id];
                                 if (widget.preferences.refresh_interval_id) {
@@ -458,7 +458,7 @@ function deleteWidgets(ids) {
                         }
                     },
                     error: function(data, textStatus) {
-                        notify('error', textStatus + data  );
+                        notify('error','Widget#'+id, textStatus + data  );
                     }
                 });
             },
@@ -487,7 +487,7 @@ function createWidget(dialog, path, formValuesObject, top, left, sizex, sizey) {
         },
         complete: function(data, textStatus){
             if(textStatus=="success") {
-                notify('notice', 'Widget successfully created.');
+                notify('success', undefined, 'Successfully deleted widget(s).');
                 var widget = JSON.parse(data.responseText);
                 //                  var widget = data;
                 Widgets[widget.id] = widget;
@@ -498,7 +498,7 @@ function createWidget(dialog, path, formValuesObject, top, left, sizex, sizey) {
             }
         },
         error: function(data, textStatus) {
-            notify('error', textStatus + data  );
+            notify('error','Widget#'+id, textStatus + data  );
         }
     });
 }
@@ -510,7 +510,7 @@ function getWidgetContent (id) {
     if (typeof (widgetClass) === 'object' && typeof (widgetClass.getWidgetContent) === 'function')
         return widgetClass.getWidgetContent(id);
     else
-        notify('error', "An error has occured."  );
+        notify('error', undefined, 'Something went wrong' );
 }
 
 // maps getEditWidgetForm() to widget's obejcts by widget's type
@@ -520,7 +520,7 @@ function getEditWidgetForm(id) {
     if (typeof (widgetClass) === 'object' && typeof (widgetClass.openWidgetForm) === 'function')
         widgetClass.openWidgetForm(id);
     else
-        notify('error', "An error has occured."  );
+        notify('error', undefined, 'Something went wrong' );
 }
 
 // maps getAddWidgetForm() to widget's obejcts by widget's type
@@ -530,7 +530,8 @@ function getAddWidgetForm(widgetClass) {
         widgetClass.openWidgetForm(0);
     }
     else
-        notify('error', "An error has occured."  );
+         notify('error', undefined, 'Something went wrong' );
+    
 }
 
 // open dialog to reassign widget to another dashboard

@@ -26,24 +26,35 @@ function open_dialog(id, title, submit_text) {
 
 
 // display notifications
-// e.g. notify('error', 'something went wrong!'
+// e.g. notify('error', 'some title', 'something went wrong!');
 // TODO extend with other severities
-function notify(type, msg) {
-    var type = type;
-    var message = msg;
-    if (type == 'error') {
-        $j('#notification').jnotifyAddMessage({
-            text: message,
-            permanent: true,
-            type: 'error'
-        });
-    } else {
-        $j.gritter.add({title: 'Notice', text: message});
-//        $j('#notification').jnotifyAddMessage({
-//            text: message,
-//            permanent: false
-//        });
-    }
+function notify(type, title, message) {
+    var image = undefined;
+    
+    switch(type) {
+        case "error":
+            if(!title) { var title = "Error"; }
+            image = "/images/gritter/error.png";
+            break;
+        case "warning":
+            if(!title) { var title = "Warning"; }
+            image = "/images/gritter/warning.png";
+            break;  
+        case "notice":
+            if(!title) { var title = "Notice"; }
+            image = "/images/gritter/notice.png";
+            break;
+        case "success":
+            if(!title) { var title = "Success"; }
+            image = "/images/gritter/success.png";
+            break;
+        }       
+    
+     if(!image) {
+         $j.gritter.add({title: title, text: message});
+     } else {
+         $j.gritter.add({image: image, title: title, text: message});
+     }
 }
 
 // The function mapIconsSetToTheme(theme) manage the mapping between themes and

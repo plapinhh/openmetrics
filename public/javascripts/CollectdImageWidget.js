@@ -63,7 +63,7 @@ $j.extend(CollectdImageWidget, {
                 }
             },
             error: function(data, textStatus) {
-                notify('error', textStatus + data  );
+                notify('error', 'CollectdImageWidget#'+widget.id, textStatus + data);
                 dialog.dialog({
                     buttons: null
                 });
@@ -90,7 +90,7 @@ $j.extend(CollectdImageWidget, {
                 }
             },
             error: function(data, textStatus) {
-                notify('error', textStatus + data  );
+                notify('error', 'CollectdImageWidget#'+widget.id, textStatus + data);
             }
         });
         widget.preferences.title = (widget.preferences.title) ? widget.preferences.title : "";

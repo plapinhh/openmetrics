@@ -77,7 +77,7 @@ $j.extend(LogtailWidget, {
                 }
             },
             error: function(data, textStatus) {
-                notify('error', textStatus + data  );
+                notify('error', 'LogtailWidget#'+widget.id, textStatus + data);
                 dialog.dialog({
                     buttons: null
                 });
@@ -103,14 +103,12 @@ $j.extend(LogtailWidget, {
             url: '/logtail/'+ prefs.system_id,
             success: function(data,textStatus){
                 if(textStatus=="success") {
-                    notify('notice', 'fresh data for LogtailWidget#'+widget.id+' received.');
-                    //                        notify('notice', 'DEBUG data: '+data+'');
-                    //                        FIXME this will flood the DOM quickly :(
+                    notify('notice', 'LogtailWidget#'+widget.id, 'Fresh data received.');
                     $j('#'+id).find("div.content-wrapper").append('<div><code>'+data+'</code></div>');
                 }
             },
             error: function(data, textStatus) {
-                notify('notice', '<strong>ERROR</strong> refreshing widget#'+widget.id+' failed. No new data received.');
+                notify('error', 'LogtailWidget#'+widget.id, 'Refreshing failed. No new data received.');
             }
         });
     }

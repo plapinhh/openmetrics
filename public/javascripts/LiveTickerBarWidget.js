@@ -65,7 +65,7 @@ $j.extend(LiveTickerBarWidget, {
                 }
             },
             error: function(data, textStatus) {
-                notify('error', textStatus + data  );
+                notify('error', 'LiveTickerBarWidget#'+widget.id, textStatus + data);
                 dialog.dialog({
                     buttons: null
                 });
@@ -91,7 +91,7 @@ $j.extend(LiveTickerBarWidget, {
                 }
             },
             error: function(data, textStatus) {
-                notify('error', textStatus + data  );
+                notify('error', 'LiveTickerBarWidget#'+widget.id, textStatus + data);
             }
         });
         var result = "";

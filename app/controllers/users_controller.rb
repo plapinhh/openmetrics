@@ -85,10 +85,10 @@ class UsersController < ApplicationController
     if ( @user.id == @current_user.id || @current_user.has_role?('master') )
       @user.save!
       redirect_back_or_default("/")
-      flash[:notice] = "Your profile has been saved!"
+      gflash :success => "Your profile has been saved!"
     else
       redirect_back_or_default("/")
-      flash[:notice] = "Couldn't save profile!!"
+      gflash :error => "Couldn't save profile!!"
     end
   end
 
@@ -109,9 +109,9 @@ class UsersController < ApplicationController
       #self.current_user = @user # !! now logged in
 
       redirect_to(users_url)
-      flash[:notice] = "New user account created. The user can now log in."
+      gflash :success => "New user account created. The user can now log in."
     else
-      flash[:error]  = "We couldn't set up that account, sorry.  Please try again."
+      gflash :error => "We couldn't set up that account, sorry.  Please try again."
       render :action => 'new'
     end
   end

@@ -148,7 +148,7 @@ $j(document).ready(function($) {
                 $j("#services_table").jqGrid('delGridRow', id, options);
             }
             else
-                notify('info', '<strong>INFO</strong> Please select a service first!');
+                notify('notice', undefined, 'Please select a service first!');       
         }
 
         // baut Running Services-Wigdet auf

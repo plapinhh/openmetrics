@@ -45,7 +45,7 @@ $j.extend(MuninImageWidget, {
                     }
                 },
                 error: function(data, textStatus) {
-                    notify('error', textStatus + data  );
+                    notify('error','MuninImageWidget#'+widget.id, textStatus + data  );
                     dialog.dialog({
                         buttons: null
                     });
@@ -71,7 +71,7 @@ $j.extend(MuninImageWidget, {
                     }
                 },
                 error: function(data, textStatus) {
-                    notify('error', textStatus + data  );
+                    notify('error','MuninImageWidget#'+widget.id, textStatus + data  );
                     dialog.dialog({
                         buttons: null
                     });
@@ -102,7 +102,7 @@ $j.extend(MuninImageWidget, {
                     }
                 },
                 error: function(data, textStatus) {
-                    notify('error', textStatus + data  );
+                    notify('error','MuninImageWidget#'+widget.id, textStatus + data  );
                     dialogContainer.children("#dateRange_selection_container").remove();
                     dialog.dialog({
                         buttons: null
@@ -197,7 +197,7 @@ function systemSelectionChangeEvent (ui, dialog, dialogContainer, Systems, widge
                 }
             },
             error: function(data, textStatus) {
-                notify('error', textStatus + data  );
+                notify('error','MuninImageWidget#'+widget.id, textStatus + data  );
                 dialogContainer.children("#dateRange_selection_container").remove();
                 dialog.dialog({
                     buttons: null
@@ -269,8 +269,8 @@ function createSystemGroupSelectionInput(dialog, dialogContainer, SystemGroups, 
                         createMuninServiceSelectionInput(dialog, dialogContainer, MuninServices, Systems, widget);
                     }
                 },
-                error: function(data, textStatus) {
-                    notify('error', textStatus + data  );
+                error: function(data, textStatus) {              
+                    notify('error','MuninImageWidget#'+widget.id, textStatus + data  );
                     dialogContainer.children("#dateRange_selection_container").remove();
                     dialog.dialog({
                         buttons: null

@@ -139,7 +139,7 @@ $j(document).ready(function($) {
         $j("#cloneSystemButton").click(function(){
             var id = $j("#systems_table").jqGrid('getGridParam','selrow');
             if( id == null ) {
-                notify('info', 'Please select a system first!');
+                notify('notice', undefined, 'Please select a system first!');
                 return;
             }
             loadSystem('clone', id, false);
@@ -186,7 +186,7 @@ $j(document).ready(function($) {
                 $j("#systems_table").jqGrid('delGridRow', id, options);
             }
             else
-                notify('info', '<strong>INFO</strong> Please select a system first!');
+                notify('notice', undefined, 'Please select a system first!');
         }
 
         // baut Running Services multiselect auf
