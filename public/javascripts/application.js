@@ -120,10 +120,10 @@ $j(document).ready(function($) {
     
     // inititialize & configure the notification_widget
     // For jNotify Inizialization
-    $j('#notification').jnotifyInizialize({
-        oneAtTime: false,
-        appendType: 'append'
-    });
+//    $j('#notification').jnotifyInizialize({
+//        oneAtTime: false,
+//        appendType: 'append'
+//    });
 
         $j.ajaxSetup ({
             // Disable caching of AJAX responses

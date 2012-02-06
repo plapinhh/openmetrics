@@ -487,7 +487,7 @@ function createWidget(dialog, path, formValuesObject, top, left, sizex, sizey) {
         },
         complete: function(data, textStatus){
             if(textStatus=="success") {
-                notify('success', undefined, 'Successfully deleted widget(s).');
+                notify('success', undefined, 'Widget created.');
                 var widget = JSON.parse(data.responseText);
                 //                  var widget = data;
                 Widgets[widget.id] = widget;
