@@ -8,7 +8,8 @@ module SSHAutomagick
    public
 
    # Writes collectd_plugin.configuration into a file in local filesystem,
-   # substitues variables & transfers it to remote server. 
+   # substitues variables & transfers it to remote server.
+   # FIXME add error handling http://ianpurton.com/ruby-ssh-example-with-error-handling
    def enable_collectd_plugin(collectd_plugin, system)
      system_ip = system.ip
      system_sshuser = system.sshuser

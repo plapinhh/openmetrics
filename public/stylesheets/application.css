@@ -230,7 +230,7 @@ button.fg-button { width:auto; overflow:visible; } /* removes extra button width
 }
 
 #openmetrics-banner {
-    text-align: right; 
+    text-align: left; 
     font-family:'lucida grande',tahoma,verdana,arial,sans-serif; 
     font-size:13px; 
     margin: 15px 25px 35px 25px; 

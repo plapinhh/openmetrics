@@ -106,11 +106,12 @@
 
   <!-- logout -->
   <div id="logout" style="float: right;">
-      <span class="ui-icon ui-icon-arrowthick-1-e" style="float: left;"></span><%= link_to 'logout', logout_url %>
-  </div>
+      <span class="ui-icon ui-icon-power inline-ui-icon" style="vertical-align: middle;"></span>
+      <%= link_to 'logout', logout_url %>
+  </div> 
 
   <!-- search box -->
-    <div id="searchbox" style="float: right;">
+    <div id="searchbox" style="float: right; vertical-align: middle;">
       <%= render :partial => "search/input" %>
     </div>
   <!--  end search box -->

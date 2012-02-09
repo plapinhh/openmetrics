@@ -11,7 +11,7 @@ user-login form
   $j(document).ready(function() {
     // positions of login elements    
     $j("#loginbox").position({ my: "center", at: "center", of: window });
-    $j("#loginbox").offset({ top: 150 });
+    $j("#loginbox").offset({ top: 50 });
 
     <%#*$j("#openmetrics-banner").position({ my: "left bottom", at: "left top", of: "#loginbox", offset: "0 -5" });%>
 
@@ -23,10 +23,12 @@ user-login form
 
 <style type="text/css">
     #loginbox {
-        width:600px;
+        width:650px;
+    }
+    #inner {
         /*border: 2px solid #F39814;*/
         border: medium double #ddd;
-        padding: 28px
+        padding: 28px;
     }
 
     #loginbox h1 {
@@ -72,49 +74,50 @@ user-login form
 
 <div id="loginbox">
 
-<div id="openmetrics-banner">
-▄▀▄ █▀▄ █▀▀ █▄░█ █▄░▄█ █▀▀ ▀█▀ █▀▀▄ ▀ ▄▀ ▄▀▀<br>
-█░█ █░█ █▀▀ █░▀█ █░█░█ █▀▀ ░█░ █▐█▀ █ █░ ░▀▄<br>
-░▀░ █▀░ ▀▀▀ ▀░░▀ ▀░░░▀ ▀▀▀ ░▀░ ▀░▀▀ ▀ ░▀ ▀▀░<br>
-</div>
+  <div id="openmetrics-banner">
+  ▄▀▄ █▀▄ █▀▀ █▄░█ █▄░▄█ █▀▀ ▀█▀ █▀▀▄ ▀ ▄▀ ▄▀▀<br>
+  █░█ █░█ █▀▀ █░▀█ █░█░█ █▀▀ ░█░ █▐█▀ █ █░ ░▀▄<br>
+  ░▀░ █▀░ ▀▀▀ ▀░░▀ ▀░░░▀ ▀▀▀ ░▀░ ▀░▀▀ ▀ ░▀ ▀▀░<br>
+  </div>
 
-  <h1>
-    <img src="/images/noun_icons/red3/32x32/lock.png" alt="[image of a lock]" style="vertical-align: middle" />
-    <span style="vertical-align: middle">Welcome stranger! Please sign in.</span>
-  </h1>
+  <div id="inner">
+    <h1>
+      <img src="/images/noun_icons/red3/32x32/lock.png" alt="[image of a lock]" style="vertical-align: middle" />
+      <span style="vertical-align: middle">Welcome stranger! Please sign in.</span>
+    </h1>
 
-  
-    <%#*Uncomment this if you want this functionality and remember to set positions%>
-    <%#= label_tag 'remember_me', 'Remember me' %of a user should>
-    <%#= check_box_tag 'remember_me', '1', @remember_me %>
 
-   <table>
-    <% form_tag session_path do -%>
-      <tr>
-        <td><%= text_field_tag 'login', @login %></td>
-        <td><%= password_field_tag 'password', nil %></td>
-        <td><%= image_submit_tag('/images/arrow-right.gif') %></td>
-      </tr>
-      <tr>
-        <td><%= label_tag 'login', 'Your username' %></td>
-        <td><%= label_tag 'password', 'Your password' %></td>
-        <td>
-         
-        </td>
-      </tr>
-      <tr>
-        <td colspan="3">
-          <div id="disclaimer">
-              <img src="/images/noun_icons/darkgrey/16x16/info.png" alt="info" style="vertical-align: middle" />
-              <small  style="vertical-align: middle">Your session will be invalidated automatically on 20 minutes of inactivity. <br/>
-              <%#*<strong>All your data are belong to  <a href="http://openmetrics.net">us</a>.</strong>%>
-            </small>
-          </div>
-        </td>
-      </tr>
-    <% end -%>
-   </table>
+      <%#*Uncomment this if you want this functionality and remember to set positions%>
+      <%#= label_tag 'remember_me', 'Remember me' %of a user should>
+      <%#= check_box_tag 'remember_me', '1', @remember_me %>
 
+    <table>
+      <% form_tag session_path do -%>
+        <tr>
+          <td><%= text_field_tag 'login', @login %></td>
+          <td><%= password_field_tag 'password', nil %></td>
+          <td><%= image_submit_tag('/images/arrow-right.gif') %></td>
+        </tr>
+        <tr>
+          <td><%= label_tag 'login', 'Your username' %></td>
+          <td><%= label_tag 'password', 'Your password' %></td>
+          <td>
+
+          </td>
+        </tr>
+        <tr>
+          <td colspan="3">
+            <div id="disclaimer">
+                <img src="/images/noun_icons/darkgrey/16x16/info.png" alt="info" style="vertical-align: middle" />
+                <small  style="vertical-align: middle">Your session will be invalidated automatically on 20 minutes of inactivity. <br/>
+                <%#*<strong>All your data are belong to  <a href="http://openmetrics.net">us</a>.</strong>%>
+              </small>
+            </div>
+          </td>
+        </tr>
+      <% end -%>
+    </table>
+  </div>
 
  <%#*end loginbox%>
 </div>
