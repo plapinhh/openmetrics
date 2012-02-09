@@ -2,7 +2,8 @@
 
 outputSizes=( 16 24 32 48 64 96 128 )
 # see http://www.imagemagick.org/script/color.php
-backColors=( darkgrey red3 steelblue3 orange violetred2 lemonchiffon )
+#backColors=( darkgrey red3 steelblue3 orange violetred2 lemonchiffon )
+backColors=( darkgrey )
 
 for bColor in ${backColors[@]} ; do 
 	echo "Generating $bColor iconset..."
@@ -27,6 +28,9 @@ for bColor in ${backColors[@]} ; do
     			96 ) bSize=94; rSize=8;;
     			128 ) bSize=128; rSize=12;;	
 			esac
+			
+			
+			# generate white shape with rounded rectangle
 			backgroundImage=`mktemp`
 			iconImage=`mktemp`
 			convert -size ${oSize}x${oSize} xc:transparent -fill ${bColor} -draw "roundrectangle 0,0 ${bSize},${bSize} ${rSize},${rSize}" PNG:${backgroundImage}
@@ -35,6 +39,17 @@ for bColor in ${backColors[@]} ; do
 			composite -gravity center ${iconImage} ${backgroundImage} ${bColor}/${oSize}x${oSize}/${name}.png
 			rm $backgroundImage
 			rm $iconImage
+
+			# generate black shape 
+			#newImage=`mktemp`
+			#iconImage=`mktemp`			
+			#convert -size ${oSize}x${oSize} xc:transparent PNG:${newImage}
+			#convert ${svgname} -transparent white -negate -compose CopyOpacity -fill darkgrey -colorize 100% -filter Gaussian -scale ${scaleSize}x${scaleSize} PNG:${iconImage}
+			#composite -gravity center ${iconImage} ${newImage} ${bColor}/${oSize}x${oSize}/${name}_darkgrey.png
+			#rm $iconImage
+			#rm $newImage
+
+			
 		done < nounnames.txt
 		echo "Done"
 	done
