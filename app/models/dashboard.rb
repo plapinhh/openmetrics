@@ -1,20 +1,21 @@
 require 'collectd_preset'
+
 class Dashboard < ActiveRecord::Base
   
   has_many :widgets, :dependent => :destroy
   # nice urls, see http://norman.github.com/friendly_id/file.Guide.html
   has_friendly_id :name, :use_slug => true, :approximate_ascii => true, :ascii_approximation_options => :german
 
-  # creates some widgets
+  # creates some widgets for a given system aka. performance overview
   # TODO cleanup temporary dashboards
   def create_dashboard_for_system (system_id)
     system = System.find(system_id)
     
-    self.name = "performance overview for "
+    self.name = "Performance overview "
     unless system.name == "unnamed"
-      self.name << "system #{system.name}"
+      self.name << "#{system.name} (#{system.ip})"
     else
-      self.name << "unnamed system (#{system.id})"      
+      self.name << "system##{system.id}"      
     end
 
     self.save
@@ -23,16 +24,16 @@ class Dashboard < ActiveRecord::Base
    
     widget = TextWidget.new()
     widget.dashboard_id = self.id
-    text = "[b]" << self.name << "(today, last week, last month)[/b]"
-    widget.preferences = 	{'text'=>text, 'bubble' => 'example-obtuse'}
-    widget.sizex = 1260
+    text = "[b][color=darkred]" << self.name << "[/color][/b]"
+    widget.preferences = 	{'text'=>text, 'bubble' => ''}
+    widget.sizex = 1040
     widget.sizey = 40
-    widget.top = 70
+    widget.top = 80
     widget.left = 20
     widget.zindex = max_zindex = max_zindex + 1
     widget.save
 
-    top = 130
+    top = 180
     CollectdPreset.create.get_all_presets.each {|preset|
       left = 20
 
@@ -47,7 +48,7 @@ class Dashboard < ActiveRecord::Base
       widget.zindex = max_zindex = max_zindex + 1
       widget.save
       top = top + 40
-      ["today_range", "lastweek_range", "lastmonth_range"].each {|range|
+      ["today_range", "lastweek_range"].each {|range|
         widget = CollectdImageWidget.new()
 
         widget.dashboard_id = self.id
@@ -58,11 +59,11 @@ class Dashboard < ActiveRecord::Base
         widget.preferences['date_range'] = range
         widget.preferences['system_id'] = ActiveSupport::JSON.encode([system_id])
 
-        widget.sizex = 400
+        widget.sizex = 500
         widget.sizey = 300
         widget.top = top + 30
         widget.left = left
-        left = left + 430
+        left = left + 540
         widget.zindex = max_zindex = max_zindex + 1
 
         widget.save
