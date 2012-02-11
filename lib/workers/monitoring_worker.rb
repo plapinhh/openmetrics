@@ -7,7 +7,7 @@ class MonitoringWorker < BackgrounDRb::MetaWorker
     logger.info "MonitoringWorker monitoring_worker started"
 
     # check all metric thresholds within 10 seconds interval
-    add_periodic_timer(10) {
+    loop.do {
       t1 = Time.now
       systems = []
       System.find(:all).each do |s|
@@ -27,7 +27,7 @@ class MonitoringWorker < BackgrounDRb::MetaWorker
   # returns OK, ERROR, WARN or UNKNOWN
   def check_metric_thresholds(system)
     t1 = Time.now
-    logger.debug "MonitoringWorker start checking metric thresholds for system #{system.name} (#{system.fqdn})"
+    #logger.debug "MonitoringWorker start checking metric thresholds for system #{system.name} (#{system.fqdn})"
     socket_path = "/var/run/collectd-socket"    
     status = 'UNKNOWN' # initially set final status
     thresholds_status = [] # this will contain each thresholds status
@@ -103,7 +103,7 @@ class MonitoringWorker < BackgrounDRb::MetaWorker
       end
     end
     t2 = Time.now
-    logger.debug "MonitoringWorker metric thresholds for system #{system.name} (#{system.fqdn}) checked, took #{t2-t1}s, status #{status}"
+    #logger.debug "MonitoringWorker metric thresholds for system #{system.name} (#{system.fqdn}) checked, took #{t2-t1}s, status #{status}"
     status
   end
 
