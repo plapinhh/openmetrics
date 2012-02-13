@@ -181,7 +181,7 @@ change behavoir to inline element */
 
 #header {
     /*background: url('/images/header.gif') repeat-x 0 0 transparent;*/
-    background: #eee;
+    background: #f6f6f6;
     /*height:60px;*/
     width:100%;
 }
@@ -195,7 +195,6 @@ change behavoir to inline element */
 #ajaxload {
     /* initially unvisible, will be shown by jquery */
     display: none;
-    margin-top: 2px;
 }
 
 /* styles for top navigation http://www.filamentgroup.com/examples/menus/index.html */

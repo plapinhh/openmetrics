@@ -133,11 +133,11 @@ $j(document).ready(function($) {
        //  AJAX loading image
        // on ajax request show loading images + remove on complete
         $j(document).ajaxSend(function(event, request, settings) {
-            $('#ajaxload').show();
+            $('#ajaxload').fadeIn(300);
         });
         $j(document).ajaxComplete(function(event, request, settings){
            //alert("ajax complete");
-           $('#ajaxload').fadeOut("slow");
+           $('#ajaxload').fadeOut(1600);
 
          });
 

@@ -97,8 +97,6 @@ $j.extend(CollectdImageWidget, {
         var html = "";
         html += "<div class='title ui-widget ui-state-default'><b>"+widget.preferences.title+"</b></div>";
         html += "<div>";
-        //        var ajaxloader= $j('<div></div>').html($j('#ajaxload').html()).html();
-        //        html += ajaxloader;
         html += $j('#ajaxload').html();
         html += "</div>";
         $j('#'+widget.id+" div.content-wrapper").fadeOut(100, function () {$j(this).html(html).fadeIn()});

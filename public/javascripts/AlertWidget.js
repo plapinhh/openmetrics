@@ -94,7 +94,7 @@ $j.extend(AlertWidget, {
             url: '/recentalerts?start_date=' + start_date,
             success: function(data, textStatus){
                 if(textStatus=="success") {
-                    notify('notice', 'AlertWidget#'+widget.id, 'Fresh data received.');
+                    //notify('notice', 'AlertWidget#'+widget.id, 'Fresh data received.');
                     // prepend alerts to widget content
                     $j.each(data, function(i, obj) {
                         //console.log(alert.alert.created_at);
