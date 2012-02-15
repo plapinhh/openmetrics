@@ -1,5 +1,5 @@
 class SystemsController < ApplicationController
-  before_filter :check_master_role, :except => [ :index, :show, :generate_dashboard ]
+  before_filter :check_master_role, :except => [ :index, :show, :performance_overview ]
   layout "application", :only => [:index, :show, :edit, :new]
 
   # GET /systems
@@ -151,9 +151,9 @@ class SystemsController < ApplicationController
 
   # generates a new dashboard and places several widgets
   # currently used to see a systems basic metrics
-  def generate_dashboard
+  def performance_overview
     dashboard = Dashboard.new()
-    dashboard.create_dashboard_for_system(params[:id])
+    dashboard.create_performance_overview(params[:id])
 
     respond_to do |format|
         ActiveRecord::Base.include_root_in_json = false

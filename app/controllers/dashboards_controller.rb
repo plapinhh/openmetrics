@@ -5,7 +5,8 @@ class DashboardsController < ApplicationController
   #layout "dashboard"
 
   def index
-    @dashboards = Dashboard.find :all, :order => 'name ASC'
+    @dashboards = Dashboard.find :all, :conditions => { :temporary => false }, :order => 'name ASC'
+    @temp_dashboards = Dashboard.find :all, :conditions => { :temporary => true }
     add_breadcrumb 'Dashboard overview'
   end
   
@@ -22,7 +23,7 @@ class DashboardsController < ApplicationController
       end
     end
 
-    add_breadcrumb @dashboard.name, 'dashboard'
+    add_breadcrumb @dashboard.name, 'dashboard' unless @dashboard.temporary?
 
     respond_to do |format|
       format.json {

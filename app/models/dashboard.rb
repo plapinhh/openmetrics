@@ -7,24 +7,25 @@ class Dashboard < ActiveRecord::Base
   has_friendly_id :name, :use_slug => true, :approximate_ascii => true, :ascii_approximation_options => :german
 
   # creates some widgets for a given system aka. performance overview
-  # TODO cleanup temporary dashboards
-  def create_dashboard_for_system (system_id)
+  # just creates a temporary dashboard
+  def create_performance_overview (system_id)
+    self.temporary = true
     system = System.find(system_id)
     
-    self.name = "Performance overview "
+    self.name = ""
     unless system.name == "unnamed"
-      self.name << "#{system.name} (#{system.ip})"
+      self.name << "#{system.name}"
     else
       self.name << "system##{system.id}"      
     end
 
     self.save
-
+   
     max_zindex = 0
    
     widget = TextWidget.new()
     widget.dashboard_id = self.id
-    text = "[b][color=darkred]" << self.name << "[/color][/b]"
+    text = "[b]Performance overview for " << self.name << "[/b]"
     widget.preferences = 	{'text'=>text, 'bubble' => ''}
     widget.sizex = 1040
     widget.sizey = 40

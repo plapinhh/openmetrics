@@ -83,6 +83,9 @@
       <label for="editDashboardInput" checked="">Edit</label>
     </div>
     <button id="openWidgetsGalleryDialog" title="Press 'a' key to open add widgets!" style="float:left">Add</button>
+    <%# if @dashboard.temporary? %>
+      <%#*<button id="saveTempDashboard" style="float:left">Convert to dashboard</button>%>
+    <%# end %>
     <button id="deleteWidgetsButton" style="float:left">Delete</button>
   </div>
 <% end %>

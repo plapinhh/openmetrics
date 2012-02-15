@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120203104323) do
+ActiveRecord::Schema.define(:version => 20120210202059) do
 
   create_table "alerts", :force => true do |t|
     t.integer  "system_id"
@@ -118,6 +118,7 @@ ActiveRecord::Schema.define(:version => 20120203104323) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "cached_slug"
+    t.boolean  "temporary",   :default => false
   end
 
   add_index "dashboards", ["cached_slug"], :name => "index_dashboards_on_cached_slug", :unique => true
@@ -378,6 +379,17 @@ ActiveRecord::Schema.define(:version => 20120203104323) do
   end
 
   add_index "users", ["login"], :name => "index_users_on_login", :unique => true
+
+  create_table "versions", :force => true do |t|
+    t.string   "item_type",  :null => false
+    t.integer  "item_id",    :null => false
+    t.string   "event",      :null => false
+    t.string   "whodunnit"
+    t.text     "object"
+    t.datetime "created_at"
+  end
+
+  add_index "versions", ["item_type", "item_id"], :name => "index_versions_on_item_type_and_item_id"
 
   create_table "widgets", :force => true do |t|
     t.integer  "dashboard_id"

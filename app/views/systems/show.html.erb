@@ -27,10 +27,10 @@
     $j('button.ui-button span, a.ui-button span').css({'margin': '0 1px 1px 0', 'line-height': '0.6', 'padding-bottom': '0.45em', 'padding-top': '0.45em'});
 
     $j('<img src="/images/noun_icons/'+iconColor+'/24x24/linechart.png" />')
-        .attr("title", "Generate dashboard")
+        .attr("title", "See how that system behaves.")
         .css({display:'inline-block', cursor: 'pointer', margin: "2px"})
         .click(function(){
-            var url = "/systems/generate_dashboard/";
+            var url = "/systems/performance_overview/";
             $j.ajax({
                url: url,
                type: "POST",
