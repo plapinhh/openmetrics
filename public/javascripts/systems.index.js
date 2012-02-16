@@ -291,7 +291,7 @@ $j(document).ready(function($) {
                 .attr("title", "Generate dashboard")
                 .css({display:'inline-block', cursor: 'pointer', margin: "2px"})
                 .click(function(){
-                    var url = "/systems/generate_dashboard/";
+                    var url = "/systems/performance_overview/";
                     $j.ajax({
                        url: url,
                        type: "POST",
