@@ -7,14 +7,15 @@ var dialogContainersSize = 0;
 $j(document).ready(function($) {
       
         // config-array mit Spaltennamen
-        var colNames=['Name','DNS Name','Type','Group', 'Description', 'Related Systems', 'Action'];
+         var colNames=['Name','Type', 'Description', 'Related Systems', 'Action'];
+        //var colNames=['Name','DNS Name','Type','Group', 'Description', 'Related Systems', 'Action'];
         
         // config-array mit Spaltenmodel (sieh ColModel API von jqGrid)
         var colModel = [
               {name:'name', index:'name', width:55, editable: false, sorttype:'text'},
-              {name:'dns_name', index:'dns_name', width:80, editable: false, sorttype:'text'},
-              {name:'type', index:'type', width:80, editable: false, sorttype:'text'},
-              {name:'group', index:'group', width:60, editable: false, sorttype:'text'},
+//              {name:'dns_name', index:'dns_name', width:80, editable: false, sorttype:'text'},
+              {name:'type', index:'type', width:40, editable: false, sorttype:'text'},
+//              {name:'group', index:'group', width:60, editable: false, sorttype:'text'},
               {name:'description', index:'description', width:120, editable: false, edittype: 'textarea', sorttype:'text'},
               {name:'systems_running_service', index:'systems_running_service', width:120, editable: false, sortable:false},
               {name:'action', index:'action', width:38, editable: false, sortable:false}
@@ -193,6 +194,7 @@ $j(document).ready(function($) {
             var service = Services[id];
             var systems_running_service_array = new Array();
 //            console.log(Services);
+            var rscount = 0;
 
             for (idx in service.systems_running_service) {
                 var srs = service.systems_running_service[idx];
@@ -201,10 +203,12 @@ $j(document).ready(function($) {
                         show_system_link += Systems[srs.id].name;
                         show_system_link += '</a>';
                     systems_running_service_array.push(show_system_link);
+                    rscount++;
                 }
             }
             //var srs_cell_string = systems_running_service_array.join('<br/>');
             var srs_cell_string = systems_running_service_array.join(', ');
+            srs_cell_string = srs_cell_string + " (" + rscount + ") ";
             $j('#services_table > tbody > tr[id="'+id+'"] > td[aria-describedby="services_table_systems_running_service"]').html(srs_cell_string).attr('title', '');
         }
 
