@@ -58,9 +58,11 @@
             <ul>
               <% @recent_scans.each do |scan| %>
               <li><%= scan.created_at %> <strong>Result: </strong><br/>
-                <p style="overflow:auto;">
+                <p style="font-family: monospace; overflow:hidden; word-wrap: break-word;">
+                    <%#*some preview of scan result%>
                     <% unless scan.scanresult.nil? %>
-                      <%= html_escape(JSON.parse(scan.scanresult)) %>
+                      <%#= html_escape(JSON.parse(scan.scanresult)) %>
+                      <%= html_escape(scan.scanresult[ 0 .. 120 ]) %>...
                     <% end %>
                     <%#= scan.scanresult.inspect %> 
                 </p>
