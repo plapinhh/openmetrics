@@ -3,13 +3,15 @@ require 'collectd_preset'
 class Dashboard < ActiveRecord::Base
   
   has_many :widgets, :dependent => :destroy
+  belongs_to :user
   # nice urls, see http://norman.github.com/friendly_id/file.Guide.html
   has_friendly_id :name, :use_slug => true, :approximate_ascii => true, :ascii_approximation_options => :german
 
   # creates some widgets for a given system aka. performance overview
-  # just creates a temporary dashboard
-  def create_performance_overview (system_id)
+  # creates a temporary dashboard that is deleted after user has been logged out
+  def create_performance_overview (system_id, user)
     self.temporary = true
+    self.user_id = user.id
     system = System.find(system_id)
     
     self.name = ""

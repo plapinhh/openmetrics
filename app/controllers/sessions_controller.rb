@@ -48,6 +48,15 @@ class SessionsController < ApplicationController
   end
 
   def destroy
+    puts "Logging out #{@current_user.name} (user##{@current_user.id})"
+    # remove temporary dashboards
+    temp_dashboards = Dashboard.find :all, :conditions => { :temporary => true , :user_id => @current_user.id}
+    if temp_dashboards
+      temp_dashboards.each do |d|
+        d.destroy
+        puts "Deleted temporary dashboard #{d.name}"
+      end
+    end
     logout_killing_session!
     gflash :success => "You have been logged out."
     redirect_back_or_default('/')

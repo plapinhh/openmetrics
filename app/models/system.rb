@@ -141,11 +141,13 @@ class System < ActiveRecord::Base
     
   end # get_services_state_at(timestamp)
 
+  # FIXME if socket holds recent data, e.g. because host (or collectd on that box
+  #       died there should be a fallback to get metrics from actual rrd files
   def collectd_scan
 #    return data_provider.get_all_metrics(self.fqdn)
     return data_provider.get_all_metrics_from_socket(self.fqdn)
   end
-
+    
   def data_provider
     unless @data_provider
       require File.expand_path("../../../lib/data_providers/collectd/collectd", __FILE__)

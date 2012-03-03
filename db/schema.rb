@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120210202059) do
+ActiveRecord::Schema.define(:version => 20120217211946) do
 
   create_table "alerts", :force => true do |t|
     t.integer  "system_id"
@@ -119,6 +119,7 @@ ActiveRecord::Schema.define(:version => 20120210202059) do
     t.datetime "updated_at"
     t.string   "cached_slug"
     t.boolean  "temporary",   :default => false
+    t.integer  "user_id"
   end
 
   add_index "dashboards", ["cached_slug"], :name => "index_dashboards_on_cached_slug", :unique => true

@@ -153,7 +153,7 @@ class SystemsController < ApplicationController
   # currently used to see a systems basic metrics
   def performance_overview
     dashboard = Dashboard.new()
-    dashboard.create_performance_overview(params[:id])
+    dashboard.create_performance_overview(params[:id], @current_user)
 
     respond_to do |format|
         ActiveRecord::Base.include_root_in_json = false

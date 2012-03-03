@@ -4,10 +4,10 @@ require File.expand_path('../../rrdtool/rrdtool', __FILE__)
 module DataProvider
   module Collectd
     class Provider < RRDTool::Provider
+      
       def initialize()
         self.load_plugins(__FILE__)
         @path = "/var/lib/collectd/rrd"
-#        @path = "/var/lib/collectd"
       end
 
       # 1) get all available metrics by socket LISTVAL
@@ -16,13 +16,11 @@ module DataProvider
       def get_all_metrics_from_socket(hostname)
         socket_path = "/var/run/collectd-socket"
 
-
         # 1)
         socket = UNIXSocket.new(socket_path)
         socket.puts("LISTVAL")
         first_line = socket.gets
         num_results = first_line.split(" ").first.to_i
-
 
         # 2)
         # TODO this isn't really effective as socket.gets will be called num_result times
@@ -33,9 +31,7 @@ module DataProvider
             metric_list << line.strip
           end
         end
-
         socket.close
-
 
         # 3)
         r = []
@@ -64,10 +60,8 @@ module DataProvider
             metric['metric_options']['metric_rrd'] = basename
             r << metric
           end
-
           socket.close
         end
-
         return r
       end  
 
@@ -75,6 +69,7 @@ module DataProvider
       def get_all_metrics(hostname)
         rel_host_path = host = hostname
         host_path = File.join(@path,rel_host_path)
+        #puts "+++++++++ scanning #{host_path}"
         if File.directory?(host_path) and not host =~ /^\./
           host_metrics = Array.new
           # Each dir is a plugin
@@ -103,6 +98,7 @@ module DataProvider
             end
           end
         end
+        #puts "+++++++++ #{host_metrics.inspect}"
         host_metrics
       end
       

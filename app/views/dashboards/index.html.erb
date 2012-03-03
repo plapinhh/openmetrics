@@ -9,7 +9,7 @@
   </li>
 </ul>
 
-
+<% unless @dashboards.empty? %>
 <h2>Your dashboards</h2>
 <table>
   <% for dashboard in @dashboards %>
@@ -23,7 +23,9 @@
     </tr>
   <% end %>
 </table>
+<% end %>
 
+<% unless @temp_dashboards.empty? %>
 <h2>Temporary dashboards</h2>
 <table>
   <%#*<th>Name</th>%>
@@ -38,3 +40,4 @@
     </tr>
   <% end %>
 </table>
+<% end %>
