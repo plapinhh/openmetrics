@@ -255,6 +255,7 @@ $j(document).ready(function($) {
         function showRunningServicesCell (id) {
             var system = Systems[id];
             var running_services_array = new Array();
+            var rscount = 0;
 
             for (idx in system.running_services) {
                 var rs = system.running_services[idx];
@@ -263,10 +264,12 @@ $j(document).ready(function($) {
                         show_service_link += Services[rs.service_id].name;
                         show_service_link += '</a>';
                     running_services_array.push(show_service_link);
+                    rscount++;
                 }
             }
             //var rs_cell_string = running_services_array.join('<br/>');
             var rs_cell_string = running_services_array.join(', ');
+            rs_cell_string = rs_cell_string + " (" + rscount + ") ";
             $j('#systems_table > tbody > tr[id="'+id+'"] > td[aria-describedby="systems_table_running_services"]').html(rs_cell_string).attr('title', '');
         }
 
