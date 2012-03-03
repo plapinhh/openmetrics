@@ -7,7 +7,7 @@ class DashboardsController < ApplicationController
   def index
     @dashboards = Dashboard.find :all, :conditions => { :temporary => false }, :order => 'name ASC'
     @temp_dashboards = Dashboard.find :all, :conditions => { :temporary => true }
-    add_breadcrumb 'Dashboard overview'
+    add_breadcrumb 'Dashboards overview'
   end
   
   def show
