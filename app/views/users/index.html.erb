@@ -15,37 +15,46 @@
 <% @backgroundrb_worker.each do |server| %>
   <h3>Node <%= server.first.to_s %></h3>
   <ul>
-    <% unless server.second.nil? %>
+  <% unless server.second.nil? %>
       <% server.second.each do |task| %>
         <li>Status: <%=  task[:status] %>, Worker: <%= task[:worker] %>, Worker Key: <%= task[:worker_key] %> </li>
       <% end %>
     </ul>
   <% else %>
+    <% @noworker = true %>
     <p </li>
     <p class="ui-state-error ui-corner-all" style="margin-top: 20px; padding: .7em .7em;">
-      No running worker found!
+      <strong>No worker found!</strong> That's bad, as some features rely on backgroundrb, e.g. threshold checking, systems scans et al.
     </p>
   <% end %>
 
 <% end %>
 
-<br/><br/>
+<br/>
+
 
 <%#*output of server log%>
 <h2><a id="serverlog">Local serverlog</a></h2>
-<p class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: .7em .7em;">
-  <span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>
-  You need to have backgroundrb started, passwordless SSH publickey authentication working and a memcached listening on localhost:11211
-</p>
-<textarea style="width: 100%; min-height: 350px; ">
-  <%= @logtail_cacheoutput %>
-</textarea>
 
+<% if @noworker %>
+<p class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: .7em .7em;">
+<span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>
+You need to have backgroundrb started, passwordless SSH publickey authentication working and a memcached listening on localhost:11211
+</p>
+<% end %>
+<% unless @noworker %>
+  <textarea style="width: 100%; min-height: 350px; ">
+    <%= @logtail_cacheoutput %>
+  </textarea>
+<% end %>
+
+<br/><br/>
 <br/><br/>
 
 
+
 <%#* currently just a list of registered users%>
-<h1><a id="usermgmt">Manage user accounts</a></h1>
+<h1><a id="usermgmt">User accounts</a></h1>
 <table>
   <tr>
     <th>Login</th><th>email</th>
@@ -76,8 +85,11 @@
 
 
 <br/><br/>
+<br/><br/>
 
-<h1><a id="metricsthresholds">Manage metrics & thresholds</a></h1>
+
+
+<h1><a id="metricsthresholds">Metrics & Thresholds</a></h1>
 <h2>Active metric thresholds</h2>
 <% @thresholds = Threshold.find(:all) %>
 <% @thresholds.each do |threshold| %>
@@ -103,6 +115,7 @@
   </ul>
   <%= link_to "<span style=\"vertical-align: middle\" class=\"ui-icon ui-icon-plusthick inline-ui-icon\"></span> Configure", collectd_plugins_path %>
 
+  <br/><br/>
   <h2>Enabled collectd plugins</h2>
   <% systems = System.find :all, :include => [:running_services => :service ] %>
   <%#*all services are just needed for sorting running services by service name%>
